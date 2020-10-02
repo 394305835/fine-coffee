@@ -14,14 +14,17 @@ class IDsRequest extends BaseRequest
     public function rules()
     {
         return [
-            'id' => 'required|separation'
+            'ids' => 'required|array',
+            //  ids是数组 .*表示数组里面的元素
+            'ids.*' => 'required|integer|min:0',
         ];
     }
 
     public function messages()
     {
         return [
-            'id.separation' => '参数格式不正确'
+            'ids.required' => 'id 参数非法',
+            'ids.array' => 'id 参数应该是数组',
         ];
     }
 }

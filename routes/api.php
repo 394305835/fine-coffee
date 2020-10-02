@@ -32,13 +32,13 @@ Route::namespace('Api')->middleware('cors')->group(function () {
         Route::namespace('Admin')->group(function () {
             // 管理员管理
             // 管理员-列表
-            // Route::get('/admin', 'AuthAdminController@index');
+            Route::get('/admins', 'AuthAdminController@index');
             // 管理员-新增
-            Route::get('/admin', 'AuthAdminController@saveAdmin');
+            Route::post('/admin', 'AuthAdminController@saveAdmin');
             // 管理员-编辑
             // Route::put('/admin', 'AuthAdminController@saveAdmin');
             // 管理员-删除
-            // Route::delete('/admin', 'AuthAdminController@deleteAdmin');
+            Route::delete('/admin', 'AuthAdminController@deleteAdmin');
 
             // 角色组
             // 角色组-列表
