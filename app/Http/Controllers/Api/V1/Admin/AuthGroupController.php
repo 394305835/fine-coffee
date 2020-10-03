@@ -19,7 +19,7 @@ class AuthGroupController extends Controller
      */
     public function index(AuthGroupIndexRequest $request, GroupService $service)
     {
-        return $service->getGroupList($request, true);
+        return $service->getRoleList($request, true);
     }
 
     /**

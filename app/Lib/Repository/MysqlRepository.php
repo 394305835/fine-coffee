@@ -174,11 +174,11 @@ abstract class MysqlRepository implements ReadRepository, DeleteRepository, Upda
      * Undocumented function
      *
      * @Override
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function all()
     {
-        return $this->model->all($this->getField());
+        return $this->model->query()->get($this->getField());
     }
 
     /**

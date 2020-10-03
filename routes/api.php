@@ -32,25 +32,25 @@ Route::namespace('Api')->middleware('cors')->group(function () {
         Route::namespace('Admin')->group(function () {
             // 管理员管理
             // 管理员-列表
-            Route::get('/admins', 'AuthAdminController@index');
+            // Route::get('/admins', 'AuthAdminController@index');
             // 管理员-新增
-            Route::post('/admin', 'AuthAdminController@saveAdmin');
+            // Route::get('/admin', 'AuthAdminController@saveAdmin');
             // 管理员-编辑
             // Route::put('/admin', 'AuthAdminController@saveAdmin');
             // 管理员-删除
-            Route::delete('/admin', 'AuthAdminController@deleteAdmin');
+            // Route::get('/admin', 'AuthAdminController@deleteAdmin');
 
             // 角色组
             // 角色组-列表
-            // Route::get('/group', 'AuthGroupController@index');
+            // Route::get('/role', 'AuthGroupController@index');
             // 角色组-下拉列表
-            // Route::get('/group/select', 'AuthGroupController@getSelect');
+            Route::get('/group/select', 'AuthGroupController@getSelect');
             // 角色组-新增
-            // Route::post('/group', 'AuthGroupController@saveGroup');
+            // Route::get('/group', 'AuthGroupController@saveGroup');
             // 角色组-编辑
             // Route::put('/group', 'AuthGroupController@saveGroup');
             // 角色组-删除
-            // Route::delete('/group', 'AuthGroupController@deleteGroup');
+            // Route::get('/group', 'AuthGroupController@deleteGroup');
 
             // 访问规则管理
             // 访问规则-列表

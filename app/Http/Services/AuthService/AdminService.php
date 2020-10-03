@@ -5,14 +5,18 @@ namespace App\Http\Services\AuthService;
 
 use App\Http\Requests\AuthAdminSaveRequest;
 use App\Http\Requests\IDsRequest;
+use App\Http\Services\AuthService;
+use App\Lib\RetJson;
 use App\Lib\Tree;
+use App\Repositories\AuthAccess;
+use App\Repositories\AuthAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AdminService
+class AdminService extends AuthService
 {
     /**
-     * 权限管理-角色组-列表获取
+     * 权限管理-管理员-列表获取(需要加上组表里面的角色名字)
      *
      * @param Request $request
      * @return PsrResponseInterface
@@ -20,27 +24,25 @@ class AdminService
     public function getAdminList(Request $request)
     {
         $curreatuid = 1;
-        //1-获取当前登录用户的角色  当前登录用户uid为2
-        $groupId = DB::table('auth_group_access')->where('uid', $curreatuid)->value('group_id');
-        dump($groupId); //1
-        //2-获取当前登录用户的角色下面的所有角色
-        $arr = DB::table('auth_group')->select('id', 'pid', 'name')->get()->toArray();
-        // auth_group 表里的数据
-        $arr = json_encode($arr);
-        $arr = json_decode($arr, true);
-        //查询当前登录用户 1 的所属角色 下面的所有角色组group_ID
-        $ids = Tree::instance()->getChildren($arr, $groupId);
-        //2,3,4,5,6,6,6
-        dump($ids);
-        //3-获取当前登录用户的角色管理所有用户--uid
-        $idcolvalue = array_column($ids, 'id');
-        dump($idcolvalue);
-        //2,3,4,5,6,7
-        // select uid from auth_group_access where group_id in($idcolvalue);
-        $uids = DB::table('auth_group_access')->whereIn('group_id', $idcolvalue)->pluck('uid');
-        dump($uids);
-        $result = DB::table('admin')->whereIn('id', $uids)->get();
-        dump($result);
+        // 1--获取下级用户的ID
+        $subAllUids = $this->getSubUserIds($curreatuid);
+        //用下级用户的ID来查询相应的ID对应的信息，最后用数组保存
+        $subUser = AuthAdmin::singleton('id', 'username', 'nickname', 'avatar', 'email')
+            ->getAdminByIds($subAllUids)->toArray();
+        //下级用户所对应的组，用数组保存
+        $groups = $this->getUserGroup($subAllUids)->toArray();
+        //
+        $access = $this->getGroupAccessByKey($subAllUids);
+        //将需要的数据拼接成需要的格式
+        $subUser = array_column($subUser, null, 'id');
+        $groups = array_column($groups, null, 'id');
+        foreach ($access as $_acc) {
+            if (isset($groups[$_acc->group_id])) {
+                $subUser[$_acc->uid]['name'] = $groups[$_acc->group_id]['name'];
+            }
+        }
+        dd($subUser);
+        return RetJson::pure()->list(array_values($subUser));
     }
 
     /**
@@ -51,39 +53,23 @@ class AdminService
      */
     public function saveAdmin(AuthAdminSaveRequest $request)
     {
+        /**
+         * 1--拿到当前用户的UID\
+         * 2--得到这个UID用户的所有下属的组ID
+         * 3--验证添加信息里面的组ID是否属于当前UID用户管
+         * 4--提示信息或者入库
+         */
+        $curreatuid = 4;
         $post = $request->only(array_keys($request->rules()));
-        //1-增加验证用户信息是否存在
-        $admin = DB::table('admin')->where('username', $post['username'])->first();
-        if (isset($admin)) {
-            echo '用户名存在';
-        } else {
-            // 2-增加 验证添加组信息是否是当前登录的这个角色的所属组
-            $arr = DB::table('auth_group')->select('id', 'pid')->get()->toArray();
-            // $arr = [
-            //     ['id' => 1, 'pid' => 0],
-            //     ['id' => 2, 'pid' => 1],
-            //     ['id' => 3, 'pid' => 1],
-            //     ['id' => 4, 'pid' => 2],
-            //     ['id' => 5, 'pid' => 4],
-            // ];
-            $ids = Tree::instance()->getChildren($arr, 2, true);
-
-            //判断获取的当前用户组是否
-            if (in_array($post['group_id'], array_column($ids, 'id'))) {
-                $uid = DB::table('admin')->insertGetId([
-                    'username' => $post['username'],
-                    'nickname' => $post['nickname'],
-                    'password' => $post['password'],
-                    'avater' => $post['avater'],
-                    'email' => $post['email']
-                ]);
-                DB::table('auth_group_access')->insert([
-                    'uid' => $uid,
-                    'groud_id' => $post['groud_id'],
-                ]);
+        if ($this->hasUserGroup($curreatuid, [$post['group_id']], true)) {
+            $user = AuthAdmin::singleton('id')->getAdminByUserName($post['username']);
+            if (empty($user)) {
+                echo '入库插入成功';
             } else {
-                echo '入库失败';
+                echo '用户名已经存在';
             }
+        } else {
+            echo '无权限';
         }
     }
 
@@ -95,47 +81,25 @@ class AdminService
      */
     public function deleteAdmin(IDsRequest $request)
     {
+        $subUids = $request->input('ids');
         //拿到要删除管理员的ID 可以是多个
-        $id = $request->input('ids');
-        //验证ID对应的用户是否有权限去删除，其中有一个不是就算失败
-        $arr = DB::table('auth_group')->select('id', 'pid')->get()->toArray();
-        $arr = json_encode($arr);
-        $arr = json_decode($arr, true);
-        //查询当前登录用户 2 的所属角色 下面的所有角色组group_ID
-        $ids = Tree::instance()->getChildren($arr, 2);
-        //查询删除用户所对应的角色组 group_ID
-        $userGroup = db::table('auth_group_access')->whereIn('uid', $id)->get()->toArray();
-        // echo '查询删除用户所对应的角色组 group_ID';
-        // dump($userGroup);
-        // dump($userGroup);
-        $i = 0;
-        //循环
-        $groupIds = array_column($ids, 'id');
-        // echo '查询当前登录用户 2 的所属角色 下面的所有角色组group_ID,对应的ID';
-        // dump($groupIds);
-
-        // 方式1
-        // 求所有数组的交集
-        $intersect = array_intersect($groupIds, array_column($userGroup, 'group_id'));
-        // echo '求交集';
-        // dd($intersect);
-
-        //方式2
-        //外层循环分别是当前需要删除的用户的ID对应的group_id组
-        // foreach ($userGroup as $_userGroup) {
-        //     //内层循环则是当前登录用户可以有权限操作的下属的所有group_id组
-        //     foreach ($ids as $_id) {
-        //         //if判断当前要删除的用户ID对应的组的ID是否是当前登录用户下属的组的ID里面。
-        //         if ($_userGroup->group_id === $_id['id']) {
-        //             $i++;
-        //         }
-        //     }
-        // }
-        if ($i === count($id)) {
-            echo 'OK';
+        $curreatuid = 1;
+        if ($this->hasUser($curreatuid, $subUids)) {
+            foreach ($subUids as $_subId) {
+                $subSubUser = $this->getSubUserIds($_subId);
+                // dd($subSubUser);
+                if (!empty($subSubUser)) {
+                    echo $_subId . '下面还有人，不能删除';
+                    exit;
+                }
+            }
+            echo '删除成功';
         } else {
-            echo 'fail';
+            echo '这些人都不是你手下的人';
         }
+
+        //验证ID对应的用户是否有权限去删除，其中有一个不是就算失败
+
     }
 
     /**

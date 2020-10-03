@@ -32,11 +32,11 @@ class AuthAdminSaveRequest extends BaseRequest
 
             'id' => 'integer|min:0', // 管理员ID, 最小0,用于编辑修改
             'username' => 'required', // 用户名
-            'nickname' => 'required', // 昵称
-            'email' => 'required|email', // 邮箱
-            'password' => 'required_without:id', // 密码
-            'loginfailure' => 'integer|min:0', // 登录失败次数
-            'status' => 'required|in:0,1', // 状态 1正常 0禁用
+            // 'nickname' => 'required', // 昵称
+            // 'email' => 'required|email', // 邮箱
+            // 'password' => 'required_without:id', // 密码
+            // 'loginfailure' => 'integer|min:0', // 登录失败次数
+            // 'status' => 'required|in:0,1', // 状态 1正常 0禁用
         ];
     }
 
