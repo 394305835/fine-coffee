@@ -54,13 +54,13 @@ Route::namespace('Api')->middleware('cors')->group(function () {
 
             // 访问规则管理
             // 访问规则-列表
-            // Route::get('/rule', 'AuthRuleController@index');
+            Route::get('/rule', 'AuthRuleController@index');
             // 访问规则-下拉列表
             // Route::get('/rule/select', 'AuthRuleController@getSelect');
             // 访问规则-新增,只有 root 组才能操作
             // Route::post('/rule', 'AuthRuleController@saveRule');
             // Route::put('/rule', 'AuthRuleController@saveRule');
-            // Route::delete('/rule', 'AuthRuleController@deleteRule');
+            Route::delete('/rule', 'AuthRuleController@deleteRule');
             // 访问规则-状态改变
             // Route::put('/rule/status', 'AuthRuleController@changeRuleStatus');
         });

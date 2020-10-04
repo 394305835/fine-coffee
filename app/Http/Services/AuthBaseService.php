@@ -52,11 +52,11 @@ class AuthBaseService
     }
 
     /**
-     * 获取用户对应的组信息
+     * 获取用户对应的组信息,可以接受多个用户的组信息
      * 提供UID，找到关系表ACCESS，找到UID对应的Group_id，查询group表，拿到信息。OVER！
      * ps: Admin->group
      */
-    public function getGroups($uids)
+    public function getGroups(array $uids)
     {
         //
         static $_groups = [];
@@ -69,12 +69,12 @@ class AuthBaseService
         /**
          * PS:分析---获取用户的组信息，那么我们需要查找出来的字段就是用户组信息里面的一些字段.
          * 这里为'id', 'pid', 'name', 'rules', 'rules_default'，我们需要传入用户的UID，在auth_group_access
-         *  中去查找UID对应的组ID，然后拿到组ID去group表中查找我们需要的字段
+         *  中去查找UID对应的group_ID，然后拿到组group_ID去group表中查找我们需要的字段
          */
     }
 
     /**
-     * 获取Access的基本方法.最终得到UID和group_id的对应关系(也就是把满足条件的access表中的数据查出来)
+     * 获取Access的基本方法.最终得到UID和group_id的对应关系(也就是把满足条件的access表中的数据查出来)--桥梁
      */
     protected function getGroupAccessByKey(array $ids, $key = 'uid'): array
     {
@@ -102,7 +102,7 @@ class AuthBaseService
     }
 
     /**
-     * 获取用户所对应的组group_id
+     * 获取用户所对应的组的UID
      * ps: Admin->Access
      * 用用户ID获取对应的UID
      */
@@ -120,11 +120,15 @@ class AuthBaseService
      * 获取组信息对应的规则列表信息
      * ps: group->rule
      */
-    public function getRules($groupIds)
+    public function getRules(array $groupIds)
     {
         $rulesId = $this->getRuleIdsByGroup($groupIds);
+        // TIP#1 超管权限
+        if (in_array('*', $rulesId)) {
+            return AuthRuleModel::select('id', 'pid', 'type', 'path', 'title', 'icon')->get()->toArray();
+        }
         return AuthRuleModel::select('id', 'pid', 'type', 'path', 'title', 'icon')
-            ->whereIn('id', $rulesId)->get();
+            ->whereIn('id', $rulesId)->get()->toArray();
 
         /**
          * 获取组信息对应的规则列表，规则列表的ID号在group组中的rule字段。
@@ -139,14 +143,15 @@ class AuthBaseService
      * 获取组信息对应的规则列表ID
      * ps: group->ruleid
      */
-    public function getRuleIdsByGroup($groupId)
+    public function getRuleIdsByGroup(array $groupIds)
     {
-        $groups = AuthGroupModel::whereIn('id', $groupId)->pluck('rules');
+        $groups = AuthGroupModel::whereIn('id', $groupIds)->pluck('rules');
         $temp = [];
         foreach ($groups as $_rules) {
             //把两个数组合并成一个数组 用0=>?,1=>?,2=>?表示
-            $temp = array_merge($temp, $_rules);
+            $temp = array_merge($temp, explode(',', $_rules));
         }
+        // TODO:这里去除重复的规则ID（一人多个角色，可能存在多个）
         return $temp;
 
         /**

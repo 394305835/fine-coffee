@@ -30,7 +30,7 @@ class AdminService extends AuthService
         $subUser = AuthAdmin::singleton('id', 'username', 'nickname', 'avatar', 'email')
             ->getAdminByIds($subAllUids)->toArray();
         //下级用户所对应的组，用数组保存
-        $groups = $this->getUserGroup($subAllUids)->toArray();
+        $groups = $this->getGroups($subAllUids)->toArray();
         //
         $access = $this->getGroupAccessByKey($subAllUids);
         //将需要的数据拼接成需要的格式

@@ -43,6 +43,7 @@ class GroupService extends AuthService
         $currentuid = 2;
         //获取用户所有的下数组,包括自己
         $agroups = $this->getUserSubGroup($currentuid, true, true);
+        // dd($agroups);
         // @TODO 处理树状结构
         // $agroups = Tree::create($agroups);
         // dd($agroups);
@@ -62,9 +63,14 @@ class GroupService extends AuthService
          */
         $currentuid = 2;
         $post = $request->only(array_keys($request->rules()));
-        $subGroupIds = $request->input('ids');
         if ($this->hasUserGroup($currentuid, [$post['group_id']], true)) {
-            echo '入库成功';
+            // !!! 这一步非常关键
+            $ruleIds = $post['rules'];
+            if ($this->hasRules($currentuid, $ruleIds)) {
+                echo '入库成功';
+            } else {
+                echo '规则不匹配，无权限操作';
+            }
         } else {
             echo '无权限';
         }
