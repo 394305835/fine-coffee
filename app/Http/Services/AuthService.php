@@ -27,21 +27,21 @@ class AuthService extends AuthBaseService
      * ps: Admin->rule
      * Admin.uid->access.group_id.  group_id->rules(value)->rule.id
      */
-    public function getUserRules($uid)
+    public function getUserRules($uid, $field = [])
     {
         $groupIds = $this->getGroupAccessGroupIds([$uid]);
-        return  $this->getRules($groupIds);
+        return  $this->getRules($groupIds, $field);
     }
 
     /**
      * 获取用户的所有下属组
      */
-    public function getUserSubGroup($uid, $self = false, $child = false)
+    public function getUserSubGroup($uid, $self = false, $child = false, $field = [])
     {
         // 1--获取用户所有组的ID
         $userGroupIds = $this->getGroupAccessGroupIds([$uid]);
         // 2--循环遍历所有组ID，取的每一个组下面的下属组
-        $allGroup = $this->getAllGroup();
+        $allGroup = $this->getAllGroup($field);
         $result = [];
         foreach ($userGroupIds as $_groupId) {
             $subGroups = Tree::instance()->getChildren($allGroup, $_groupId, $self, $child);
@@ -134,7 +134,8 @@ class AuthService extends AuthBaseService
     public function hasRules($uid, $subRulesIds)
     {
         $rulesIds = $this->getUserRuleIds($uid);
-        return $this->check($subRulesIds, $rulesIds);
+
+        return in_array('*', $rulesIds) || $this->check($subRulesIds, $rulesIds);
     }
 
 

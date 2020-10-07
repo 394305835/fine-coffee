@@ -25,14 +25,11 @@ class AuthRuleSaveRequest extends BaseRequest
     {
         return [
             'id'        => 'integer|min:1', // 保存时需要传递ID
-            'is_menu'   => 'required|integer|in:0,1', // 是否是菜单 1是 0否
             'pid'       => 'integer|min:0', // 该权限所属上级
-            'condition' => '', // 规则
             'title'     => 'required', // 规则标题
-            'name'      => 'required', // 权限名称，就是 url
+            'path'      => 'required', // 权限名称，就是 url
             'icon'      => '', // 图标
-            'weigh'     => 'required|integer', // 权重
-            'remark'    => '', // 备注
+            'sort'     => 'required|integer', // 权重
             'status'    => 'required|in:0,1', // 状态 1正常 0禁用
         ];
     }
@@ -47,9 +44,8 @@ class AuthRuleSaveRequest extends BaseRequest
             'id.min'        => 'id 参数非法',
             'pid'           => '父级节点参数错误',
             'title.require' => '规则标题不能为空',
-            'name.require'  => '规则不能为空',
-            'weigh'             => '权重值参数不正确',
-            'is_menu.required'  => '请选择是否为菜单',
+            'path.require'  => '规则不能为空',
+            'sort'             => '权重值参数不正确',
             'status.required'   => '规则状态不能为空',
         ];
     }

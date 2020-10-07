@@ -231,7 +231,15 @@ abstract class MysqlRepository implements ReadRepository, DeleteRepository, Upda
      */
     public function insert(array $bean): bool
     {
-        $bean[$this->model::CREATED_AT] = $bean[$this->model::UPDATED_AT] = time();
+        $created_at = $this->model::CREATED_AT;
+        $updated_at = $this->model::UPDATED_AT;
+        if (count($bean) == count($bean, 1)) {
+            $bean[$created_at] = $bean[$updated_at] = time();
+        } else {
+            foreach ($bean as &$_bean) {
+                $_bean[$created_at] = $_bean[$updated_at] = time();
+            }
+        }
         return !!$this->model->query()->insert($bean);
     }
 }

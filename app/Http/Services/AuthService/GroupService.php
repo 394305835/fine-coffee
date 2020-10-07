@@ -3,10 +3,13 @@
 
 namespace App\Http\Services\AuthService;
 
+use App\Contracts\RestFul\Ret\RetInterface;
+use App\Http\Requests\AuthGroupSaveRequest;
 use App\Http\Services\AuthService;
 use App\Lib\RetJson;
-use App\Lib\Tree;
+use App\Repositories\AuthGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GroupService extends AuthService
 {
@@ -14,17 +17,16 @@ class GroupService extends AuthService
      * 权限管理-角色组-列表获取
      *
      * @param Request $request
-     * @return PsrResponseInterface
+     * @return RetInterface
      */
-    public function getRoleList(Request $request, bool $hasHandler = false)
+    public function getRoleList(Request $request, bool $hasHandler = false): RetInterface
     {
         /**
          * 1--Admin->group 拿到当前登录用户的UID，在access表中查找对应的uid和group_id的关系
          * 然后在group表中找到group_)id对应的角色 
          */
-        $currentuid = 2;
         //获取用户所有的下数组,包括自己
-        $agroups = $this->getUserSubGroup($currentuid, true);
+        $agroups = $this->getUserSubGroup(REQUEST_UID, true);
         return RetJson::pure()->list($agroups);
     }
 
@@ -32,47 +34,46 @@ class GroupService extends AuthService
      * 权限管理-角色组-下拉列表
      *
      * @param Request $request
-     * @return PsrResponseInterface
+     * @return RetInterface
      */
-    public function getSelect(Request $request)
+    public function getSelect(Request $request): RetInterface
     {
         /**
          * 1--Admin->group 拿到当前登录用户的UID，在access表中查找对应的uid和group_id的关系
          * 然后在group表中找到group_)id对应的角色 
          */
-        $currentuid = 2;
         //获取用户所有的下数组,包括自己
-        $agroups = $this->getUserSubGroup($currentuid, true, true);
-        // dd($agroups);
-        // @TODO 处理树状结构
-        // $agroups = Tree::create($agroups);
-        // dd($agroups);
-        // return RetJson::pure()->list($agroups);
+        $agroups = $this->getUserSubGroup(REQUEST_UID, true, true, ['id', 'pid', 'name']);
+        return RetJson::pure()->list($agroups);
     }
 
     /**
      * 权限管理-角色组-保存或添加
      *
      * @param Request $request
-     * @return PsrResponseInterface
+     * @return RetInterface
      */
-    public function saveGroup(Request $request)
+    public function saveGroup(AuthGroupSaveRequest $request): RetInterface
     {
-        /**
-         * 1--
-         */
-        $currentuid = 2;
         $post = $request->only(array_keys($request->rules()));
-        if ($this->hasUserGroup($currentuid, [$post['group_id']], true)) {
+        unset($post['rules']['*']);
+        if ($this->hasUserGroup(REQUEST_UID, [$post['pid']], true)) {
             // !!! 这一步非常关键
             $ruleIds = $post['rules'];
-            if ($this->hasRules($currentuid, $ruleIds)) {
-                echo '入库成功';
+            if ($this->hasRules(REQUEST_UID, $ruleIds)) {
+                try {
+                    $post['rules'] = implode(',', $post['rules']);
+                    $post['rules_default'] = implode(',', $post['rules_default']);
+                    AuthGroup::singleton()->insert($post);
+                    return RetJson::pure()->msg('保存成功');
+                } catch (\Throwable $th) {
+                    return RetJson::pure()->throwable($th);
+                }
             } else {
-                echo '规则不匹配，无权限操作';
+                return RetJson::pure()->error('规则不匹配，无权限操作');
             }
         } else {
-            echo '无权限';
+            return RetJson::pure()->error('无权限');
         }
     }
 
@@ -80,25 +81,25 @@ class GroupService extends AuthService
      * 权限管理-角色组-删除,支持多个
      *
      * @param Request $request
-     * @return PsrResponseInterface
+     * @return RetInterface
      */
-    public function deleteGroup(Request $request)
+    public function deleteGroup(Request $request): RetInterface
     {
         /**
          * 1--验证组是否存在或者所属当前登录用户的。
          * 2--判断这个组下面是否有用户。只能删除下级中没有人的角色。
          * 删除这个职位要么是没得人的，要么是下级没得人的 同时满足这两种情况
          */
-        $currentuid = 2;
         $subGroupIds = $request->input('ids');
-        if ($this->hasUserGroup($currentuid, $subGroupIds)) {
+        if ($this->hasUserGroup(REQUEST_UID, $subGroupIds)) {
             if ($this->hasGroupUser($subGroupIds)) {
-                echo '当前职位存在人员，无法删除';
+                return RetJson::pure()->error('当前职位存在人员，无法删除');
             } else {
-                echo '删除成功';
+                AuthGroup::singleton()->deleteGroupByIds($subGroupIds);
+                return RetJson::pure()->msg('删除成功');
             }
         } else {
-            echo '无权限';
+            return RetJson::pure()->error('无权限');
         }
     }
 }

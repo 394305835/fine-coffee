@@ -18,4 +18,8 @@ class AuthGroup extends MysqlRepository
     {
         return AuthGroupModel::singleton();
     }
+    public function deleteGroupByIds(array $uids): bool
+    {
+        return !!$this->model->whereIn('id', $uids)->delete();
+    }
 }

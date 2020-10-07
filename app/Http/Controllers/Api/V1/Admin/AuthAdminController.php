@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Contracts\RestFul\RESTFulAPI;
+use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthAdminIndexRequest;
 use App\Http\Requests\AuthAdminLogIndexRequest;
@@ -38,7 +40,7 @@ class AuthAdminController extends Controller
      */
     public function login(AuthAdminLoginRequest $request, LoginService $service)
     {
-        return $service->login($request);
+        return $this->api->reply($service->login($request));
     }
 
     /**
@@ -50,7 +52,7 @@ class AuthAdminController extends Controller
      */
     public function logout(AuthAdminLoginRequest $request, LoginService $service)
     {
-        return $service->logout($request);
+        return $this->api->reply($service->logout($request));
     }
 
     /**
@@ -62,7 +64,7 @@ class AuthAdminController extends Controller
      */
     public function index(AuthAdminIndexRequest $request, AdminService $service)
     {
-        return $service->getAdminList($request);
+        return $this->api->reply($service->getAdminList($request));
     }
 
     /**
@@ -74,7 +76,7 @@ class AuthAdminController extends Controller
      */
     public function saveAdmin(AuthAdminSaveRequest $request, AdminService $service)
     {
-        return $service->saveAdmin($request);
+        return $this->api->reply($service->saveAdmin($request));
     }
 
     /**
@@ -86,7 +88,7 @@ class AuthAdminController extends Controller
      */
     public function deleteAdmin(IDsRequest $request, AdminService $service)
     {
-        return $service->deleteAdmin($request);
+        return $this->api->reply($service->deleteAdmin($request));
     }
 
     /**

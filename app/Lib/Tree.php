@@ -20,7 +20,7 @@ class Tree
     }
 
     /**
-     * 将一个数组转换成型
+     * 将一个数组转换成树型
      *
      * @param array $items
      * @param integer $maxLevel

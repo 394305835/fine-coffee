@@ -32,11 +32,10 @@ class AuthApi
      */
     protected $api;
 
-    public function __construct(TokenInterface $token, RESTFulAPI $api, LogServiceInterface $log)
+    public function __construct(TokenInterface $token, RESTFulAPI $api)
     {
         $this->token = $token;
         $this->api = $api;
-        $this->log = $log;
     }
 
     /**

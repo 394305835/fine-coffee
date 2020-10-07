@@ -3,11 +3,12 @@
 
 namespace App\Http\Services\AuthService;
 
+use App\Contracts\RestFul\Ret\RetInterface;
+use App\Http\Requests\AuthAdminIndexRequest;
 use App\Http\Requests\AuthAdminSaveRequest;
 use App\Http\Requests\IDsRequest;
 use App\Http\Services\AuthService;
 use App\Lib\RetJson;
-use App\Lib\Tree;
 use App\Repositories\AuthAccess;
 use App\Repositories\AuthAdmin;
 use Illuminate\Http\Request;
@@ -21,11 +22,10 @@ class AdminService extends AuthService
      * @param Request $request
      * @return PsrResponseInterface
      */
-    public function getAdminList(Request $request)
+    public function getAdminList(AuthAdminIndexRequest $request): RetInterface
     {
-        $curreatuid = 1;
         // 1--获取下级用户的ID
-        $subAllUids = $this->getSubUserIds($curreatuid);
+        $subAllUids = $this->getSubUserIds(REQUEST_UID);
         //用下级用户的ID来查询相应的ID对应的信息，最后用数组保存
         $subUser = AuthAdmin::singleton('id', 'username', 'nickname', 'avatar', 'email')
             ->getAdminByIds($subAllUids)->toArray();
@@ -37,21 +37,20 @@ class AdminService extends AuthService
         $subUser = array_column($subUser, null, 'id');
         $groups = array_column($groups, null, 'id');
         foreach ($access as $_acc) {
-            if (isset($groups[$_acc->group_id])) {
-                $subUser[$_acc->uid]['name'] = $groups[$_acc->group_id]['name'];
+            if (isset($groups[$_acc['group_id']])) {
+                $subUser[$_acc['uid']]['name'] = $groups[$_acc['group_id']]['name'];
             }
         }
-        dd($subUser);
         return RetJson::pure()->list(array_values($subUser));
     }
 
     /**
-     * 权限管理-管理员-增加和保存
+     * 权限管理-管理员-增加和修改
      *
      * @param Request $request
-     * @return PsrResponseInterface
+     * @return RetInterface
      */
-    public function saveAdmin(AuthAdminSaveRequest $request)
+    public function saveAdmin(AuthAdminSaveRequest $request): RetInterface
     {
         /**
          * 1--拿到当前用户的UID\
@@ -59,17 +58,39 @@ class AdminService extends AuthService
          * 3--验证添加信息里面的组ID是否属于当前UID用户管
          * 4--提示信息或者入库
          */
-        $curreatuid = 4;
         $post = $request->only(array_keys($request->rules()));
-        if ($this->hasUserGroup($curreatuid, [$post['group_id']], true)) {
+        $groupId = [(int)$post['group_id']];
+        // $uid = empty($post['id']) ? 0 : (int)$post['id'];
+        unset($post['id'], $post['group_id']);
+
+        if ($this->hasUserGroup(REQUEST_UID, $groupId, true)) {
             $user = AuthAdmin::singleton('id')->getAdminByUserName($post['username']);
             if (empty($user)) {
-                echo '入库插入成功';
+                $post['password'] = encrypt($post['password']);
+                DB::beginTransaction();
+                try {
+                    $uid = AuthAdmin::singleton()->insertGetId($post);
+                    // TODO
+                    $access = [];
+                    foreach ($groupId as $_groupId) {
+                        $access[] = [
+                            'uid' => $uid,
+                            'group_id' => $_groupId
+                        ];
+                    }
+                    AuthAccess::singleton()->insert($access);
+                    DB::commit();
+                    return RetJson::pure()->msg('添加成功');
+                } catch (\Throwable $th) {
+                    dd($th);
+                    DB::rollBack();
+                    return RetJson::pure()->throwable($th);
+                }
             } else {
-                echo '用户名已经存在';
+                return RetJson::pure()->error('用户名已经存在');
             }
         } else {
-            echo '无权限';
+            return RetJson::pure()->error('无权限');
         }
     }
 
@@ -79,25 +100,31 @@ class AdminService extends AuthService
      * @param Request $request
      * @return PsrResponseInterface
      */
-    public function deleteAdmin(IDsRequest $request)
+    public function deleteAdmin(IDsRequest $request): RetInterface
     {
         $subUids = $request->input('ids');
         //拿到要删除管理员的ID 可以是多个
-        $curreatuid = 1;
-        if ($this->hasUser($curreatuid, $subUids)) {
+        if ($this->hasUser(REQUEST_UID, $subUids)) {
             foreach ($subUids as $_subId) {
                 $subSubUser = $this->getSubUserIds($_subId);
                 // dd($subSubUser);
                 if (!empty($subSubUser)) {
-                    echo $_subId . '下面还有人，不能删除';
-                    exit;
+                    return RetJson::pure()->error($_subId . '下面还有人，不能删除');
                 }
             }
-            echo '删除成功';
+            DB::beginTransaction();
+            try {
+                AuthAdmin::singleton()->deleteAdminByIds($subUids);
+                AuthAccess::singleton()->deleteAccessByUids($subUids);
+                DB::commit();
+                return RetJson::pure()->msg('删除成功');
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return RetJson::pure()->throwable($th);
+            }
         } else {
-            echo '这些人都不是你手下的人';
+            return RetJson::pure()->error('这些人都不是你手下的人');
         }
-
         //验证ID对应的用户是否有权限去删除，其中有一个不是就算失败
 
     }

@@ -120,15 +120,17 @@ class AuthBaseService
      * 获取组信息对应的规则列表信息
      * ps: group->rule
      */
-    public function getRules(array $groupIds)
+    public function getRules(array $groupIds, $field = [])
     {
         $rulesId = $this->getRuleIdsByGroup($groupIds);
+        if (empty($field)) {
+            $field = ['id', 'pid', 'type', 'path', 'title', 'icon'];
+        }
         // TIP#1 超管权限
         if (in_array('*', $rulesId)) {
-            return AuthRuleModel::select('id', 'pid', 'type', 'path', 'title', 'icon')->get()->toArray();
+            return AuthRuleModel::select($field)->get()->toArray();
         }
-        return AuthRuleModel::select('id', 'pid', 'type', 'path', 'title', 'icon')
-            ->whereIn('id', $rulesId)->get()->toArray();
+        return AuthRuleModel::select($field)->whereIn('id', $rulesId)->get()->toArray();
 
         /**
          * 获取组信息对应的规则列表，规则列表的ID号在group组中的rule字段。
@@ -165,9 +167,14 @@ class AuthBaseService
     /**
      * 获取所有组信息
      */
-    public function getAllGroup(): array
+    public function getAllGroup(array $field = []): array
     {
-        $allGroup = AuthGroup::singleton('id', 'pid', 'name', 'rules', 'rules_default')->all();
+        if (empty($field)) {
+            $allGroup = AuthGroup::singleton('id', 'pid', 'name', 'rules', 'rules_default')->all();
+        } else {
+            // ...表示把里面元素分别取出来
+            $allGroup = AuthGroup::singleton(...$field)->all();
+        }
         return $allGroup->toArray();
     }
 }

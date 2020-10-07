@@ -19,7 +19,7 @@ class AuthGroupController extends Controller
      */
     public function index(AuthGroupIndexRequest $request, GroupService $service)
     {
-        return $service->getRoleList($request, true);
+        return $this->api->reply($service->getRoleList($request, true));
     }
 
     /**
@@ -32,7 +32,7 @@ class AuthGroupController extends Controller
      */
     public function getSelect(AuthGroupIndexRequest $request, GroupService $service)
     {
-        return $service->getSelect($request);
+        return $this->api->reply($service->getSelect($request));
     }
 
     /**
@@ -44,7 +44,7 @@ class AuthGroupController extends Controller
      */
     public function saveGroup(AuthGroupSaveRequest $request, GroupService $service)
     {
-        return $service->saveGroup($request);
+        return $this->api->reply($service->saveGroup($request));
     }
 
     /**
@@ -56,6 +56,6 @@ class AuthGroupController extends Controller
      */
     public function deleteGroup(IDsRequest $request, GroupService $service)
     {
-        return $service->deleteGroup($request);
+        return $this->api->reply($service->deleteGroup($request));
     }
 }

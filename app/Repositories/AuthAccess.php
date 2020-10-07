@@ -31,4 +31,10 @@ class AuthAccess extends MysqlRepository
     {
         return $this->model->whereIn('uid', $uids)->get();
     }
+
+    public function deleteAccessByUids(array $uids): bool
+    {
+        return !!$this->model->whereIn('uid', $uids)->delete();
+    }
+    //
 }

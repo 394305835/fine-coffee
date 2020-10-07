@@ -18,13 +18,18 @@ class AuthAdmin extends MysqlRepository
     {
         return AuthAdminModel::singleton();
     }
+    public function deleteAdminByIds(array $uids): bool
+    {
+        // !!= (bool)
+        return !!$this->model->whereIn('id', $uids)->delete();
+    }
 
     public function getAdminByIds($uids)
     {
         return $this->model->whereIn('id', $uids)->get($this->field);
     }
 
-    public function getAdminByUserName($username)
+    public function getAdminByUserName(string $username): ?AuthAdminModel
     {
         return $this->model->where('username', $username)->first($this->field);
     }

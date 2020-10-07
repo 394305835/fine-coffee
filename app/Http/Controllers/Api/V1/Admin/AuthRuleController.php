@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Contracts\RestFul\Ret\RetInterface;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRuleIndexRequest;
 use App\Http\Requests\AuthRuleSaveRequest;
 use App\Http\Requests\IDsRequest;
 use App\Http\Services\AuthService\RuleService;
 
-class AuthRuleController
+class AuthRuleController extends Controller
 {
     /**
      * 权限管理-菜单规则-列表获取
@@ -17,7 +19,7 @@ class AuthRuleController
      */
     public function apiIndex(AuthRuleIndexRequest $request, RuleService $service)
     {
-        return $service->getRuleList($request);
+        return $this->api->reply($service->getRuleList($request));
     }
 
     /**
@@ -28,7 +30,7 @@ class AuthRuleController
      */
     public function index(AuthRuleIndexRequest $request, RuleService $service)
     {
-        return $service->getRuleList($request, true);
+        return $this->api->reply($service->getRuleList($request, true));
     }
 
     /**
@@ -41,7 +43,7 @@ class AuthRuleController
      */
     public function getSelect(AuthRuleIndexRequest $request, RuleService $service)
     {
-        return $service->getSelect($request);
+        return $this->api->reply($service->getSelect($request));
     }
 
     /**
@@ -53,12 +55,12 @@ class AuthRuleController
      */
     public function saveRule(AuthRuleSaveRequest $request, RuleService $service)
     {
-        return $service->saveRule($request);
+        return $this->api->reply($service->saveRule($request));
     }
 
     public function changeRuleStatus(IDsRequest $request, RuleService $service)
     {
-        return $service->changeRuleStatus($request);
+        return $this->api->reply($service->changeRuleStatus($request));
     }
 
     /**
@@ -70,6 +72,6 @@ class AuthRuleController
      */
     public function deleteRule(IDsRequest $request, RuleService $service)
     {
-        return $service->deleteRule($request);
+        return $this->api->reply($service->deleteRule($request));
     }
 }
