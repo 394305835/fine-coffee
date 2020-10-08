@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRuleIndexRequest;
 use App\Http\Requests\AuthRuleSaveRequest;
 use App\Http\Requests\IDsRequest;
-use App\Http\Services\AuthService\RuleService;
+use App\Http\Services\Admin\AuthService\RuleService;
 
 class AuthRuleController extends Controller
 {

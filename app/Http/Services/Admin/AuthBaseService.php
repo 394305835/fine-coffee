@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Http\Services\Admin;
 
 use App\Model\Mysql\AuthGroupAccessModel;
 use App\Model\Mysql\AuthGroupModel;
@@ -103,7 +103,7 @@ class AuthBaseService
 
     /**
      * 获取用户所对应的组的UID
-     * ps: Admin->Access
+     * ps: Admin->Acces
      * 用用户ID获取对应的UID
      */
     public function getGroupAccessUIds(array $groupIds): array

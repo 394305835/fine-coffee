@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Http\Services\Admin;
 
-use App\Contracts\RestFul\Ret\RetInterface;
 use App\Lib\Tree;
 use App\Repositories\AuthAccess;
 

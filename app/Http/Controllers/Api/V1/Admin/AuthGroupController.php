@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthGroupIndexRequest;
 use App\Http\Requests\AuthGroupSaveRequest;
 use App\Http\Requests\IDsRequest;
-use App\Http\Services\AuthService\GroupService;
+use App\Http\Services\Admin\AuthService\GroupService;
 
 class AuthGroupController extends Controller
 {

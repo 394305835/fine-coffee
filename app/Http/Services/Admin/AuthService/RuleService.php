@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Http\Services\AuthService;
+namespace App\Http\Services\Admin\AuthService;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\AuthRuleSaveRequest;
-use App\Http\Services\AuthService;
+use App\Http\Services\Admin\AuthService;
 use App\Lib\RetJson;
 use App\Lib\Tree;
 use App\Repositories\AuthRule;

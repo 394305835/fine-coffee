@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Http\Services\AuthService;
+namespace App\Http\Services\Admin\AuthService;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\AuthAdminIndexRequest;
 use App\Http\Requests\AuthAdminSaveRequest;
 use App\Http\Requests\IDsRequest;
-use App\Http\Services\AuthService;
+use App\Http\Services\Admin\AuthService;
 use App\Lib\RetJson;
 use App\Repositories\AuthAccess;
 use App\Repositories\AuthAdmin;

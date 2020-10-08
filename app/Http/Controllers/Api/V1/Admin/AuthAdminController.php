@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Contracts\RestFul\RESTFulAPI;
-use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthAdminIndexRequest;
 use App\Http\Requests\AuthAdminLogIndexRequest;
 use App\Http\Requests\AuthAdminLoginRequest;
 use App\Http\Requests\AuthAdminSaveRequest;
 use App\Http\Requests\IDsRequest;
-use App\Http\Services\AuthService\AdminService;
-use App\Http\Services\AuthService\LoginService;
+use App\Http\Services\Admin\AuthService\AdminService;
+use App\Http\Services\Admin\AuthService\LoginService;
 use Illuminate\Http\Request;
 
 class AuthAdminController extends Controller

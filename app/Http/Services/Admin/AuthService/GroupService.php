@@ -1,15 +1,14 @@
 <?php
 
 
-namespace App\Http\Services\AuthService;
+namespace App\Http\Services\Admin\AuthService;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\AuthGroupSaveRequest;
-use App\Http\Services\AuthService;
+use App\Http\Services\Admin\AuthService;
 use App\Lib\RetJson;
 use App\Repositories\AuthGroup;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class GroupService extends AuthService
 {
