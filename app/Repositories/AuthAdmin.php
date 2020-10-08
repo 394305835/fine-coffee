@@ -33,4 +33,8 @@ class AuthAdmin extends MysqlRepository
     {
         return $this->model->where('username', $username)->first($this->field);
     }
+    public function getAdminById(int $id): ?AuthAdminModel
+    {
+        return $this->model->where('id', $id)->first($this->field);
+    }
 }

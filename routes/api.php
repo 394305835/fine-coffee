@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-
 // 通常
 Route::namespace('Sign')->middleware('cors')->group(function () {
     // Route::post('login', 'LoginController@login');
@@ -34,7 +33,12 @@ Route::namespace('Api')->middleware('cors')->group(function () {
             Route::post('/login', 'AuthAdminController@login');
             Route::post('/logout', 'AuthAdminController@logout');
 
+            //验证token访问的接口
             Route::middleware('auth.api')->group(function () {
+                //验证API
+                //个人信息获取
+                Route::get('/info', 'AuthAdminController@getUserInfo');
+                //验证权限
                 // 管理员管理
                 // 管理员-列表
                 Route::get('/admins', 'AuthAdminController@index');

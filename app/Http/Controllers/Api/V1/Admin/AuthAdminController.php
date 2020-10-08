@@ -17,18 +17,15 @@ use Illuminate\Http\Request;
 class AuthAdminController extends Controller
 {
     /**
-     * 管理员个人信息
+     * 当前登录管理员个人信息
      *
      * @api
      * @param Request $request
      * @return PsrResponseInterface
      */
-    public function getInfo(Request $request)
+    public function getUserInfo(Request $request, AdminService $service)
     {
-        $admin = $request->getAttribute('_admin');
-        unset($admin->password);
-        unset($admin->loginfailure);
-        return $this->Errno->success($admin);
+        return $this->api->reply($service->getUserInfo($request));
     }
 
     /**

@@ -16,6 +16,23 @@ use Illuminate\Support\Facades\DB;
 
 class AdminService extends AuthService
 {
+
+    /**
+     * 获取当前管理员信息
+     */
+    public function getUserInfo(): RetInterface
+    {
+        //拿到用户信息
+        $adminInfo = AuthAdmin::singleton('id', 'username', 'nickname', 'avatar', 'email')
+            ->getAdminById(REQUEST_UID)->toArray();
+        $groups = $this->getUserGroup(REQUEST_UID);
+        $adminInfo['name'] = array_column($groups->toarray(), 'name');
+        // $adminInfo['name'] = [];
+        // foreach ($groups as $_group) {
+        //     $adminInfo['name'][] = $_group->name;
+        // }
+        return RetJson::pure()->entity($adminInfo);
+    }
     /**
      * 权限管理-管理员-列表获取(需要加上组表里面的角色名字)
      *
