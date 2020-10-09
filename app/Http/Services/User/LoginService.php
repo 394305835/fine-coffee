@@ -3,10 +3,12 @@
 namespace App\Http\Services\User;
 
 use App\Contracts\RestFul\Ret\RetInterface;
+use App\Contracts\Token\TokenInterface;
 use App\Http\Requests\User\UserLoginRequest;
 use App\Lib\RetJson;
 use App\Repositories\SMS;
 use App\Repositories\User;
+use App\Repositories\Token\UserToken;
 use Illuminate\Http\Request;
 
 /**
@@ -14,6 +16,23 @@ use Illuminate\Http\Request;
  */
 class LoginService extends UserBaseService
 {
+    /**
+     * @var TokenInterface
+     */
+    protected $token;
+
+    /**
+     * Undocumented variable
+     *
+     * @var $Token
+     */
+    protected $UserToken;
+    public function __construct(TokenInterface $token)
+    {
+        $this->UserToken = UserToken::singleton();
+        $this->token = $token->use($this->UserToken);
+    }
+
     /**
      * 用户登录
      *
@@ -33,8 +52,19 @@ class LoginService extends UserBaseService
             if ($code == $smsCode) {
                 $ret = $this->singup($request);
                 $res = $ret->getBody();
-                if (!empty($res['entity']['id'])) {
-                    return RetJson::pure()->msg('登录成功');
+                if (!empty($uid = $res['entity']['id'])) {
+                    $type = 'apiKey';
+                    $repeat = true;
+                    $key = 'Authorization';
+                    $void = false;
+                    // 获取 token 是否已经存在
+                    if (!$token = $this->UserToken->getToken((int) $uid)) {
+                        $repeat = false;
+                        $token = $this->token->create(['uid' => $uid]);
+                    }
+                    // 刷新 Token
+                    $repeat && $this->token->refresh($token);
+                    return RetJson::pure()->setBody(compact('token', 'type', 'repeat', 'key', 'void'));
                 } else {
                     return RetJson::pure()->error('登录失败');
                 }

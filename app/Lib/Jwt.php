@@ -4,7 +4,8 @@ namespace App\Lib;
 
 use App\Contracts\Token\TokenInterface;
 use App\Lib\Constans;
-use App\Repositories\TokenRedis;
+use App\Repositories\Token\AdminToken;
+use App\Repositories\Token\Token;
 
 /**
  * JWT 认证
@@ -64,13 +65,26 @@ EOF;
     /**
      * redis 实例
      *
-     * @var TokenRedis
+     * @var Token
      */
     protected $Token;
 
     public function __construct()
     {
-        $this->Token = TokenRedis::singleton();
+        // $this->Token = TokenRedis::singleton();
+        //默认就是后台存储Token的仓库
+        $this->use(AdminToken::singleton());
+    }
+
+    /**
+     * 该方法区分使用哪个存储token的仓库
+     *
+     * @param Token $token
+     */
+    public function use($token)
+    {
+        $this->Token = $token;
+        return $this;
     }
 
     public function getPayload(string $token = ''): \stdClass

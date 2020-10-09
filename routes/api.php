@@ -22,14 +22,14 @@ Route::namespace('Sign')->middleware('cors')->group(function () {
 Route::namespace('Api')->middleware('cors')->group(function () {
     Route::namespace('V1')->prefix('v1')->group(function () {
         // 用户端
-        Route::namespace('User')->group(function () {
+        Route::namespace('User')->prefix('user')->group(function () {
             //登录
-            Route::post('/user/login', 'LoginController@login');
-            Route::post('/user/logout', 'LoginController@logout');
-            Route::get('/user/sms', 'ApiController@getSMS');
+            Route::post('/login', 'LoginController@login');
+            Route::post('/logout', 'LoginController@logout');
+            Route::get('/sms', 'ApiController@getSMS');
 
             // 用户-列表
-            Route::get('/users', 'UserController@index');
+            Route::get('/list', 'UserController@index');
             // 用户-新增
             Route::post('/user', 'UserController@saveUser');
 

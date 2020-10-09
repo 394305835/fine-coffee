@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Token;
 
 use App\Contracts\Repositories\RedisTokenInterface;
 use App\Lib\Repository\RedisRepository;
@@ -8,11 +8,16 @@ use App\Lib\Repository\RedisRepository;
 /**
  * token 放在 普通 key 里面,可以保证期时间有效性
  */
-class TokenRedis extends RedisRepository implements RedisTokenInterface
+class Token extends RedisRepository implements RedisTokenInterface
 {
 
-    protected $key = 'codebook:jwt:user';
+    protected $key = 'codebook:jwt';
 
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * 获取token 在 redis 中的 key
      *
@@ -25,8 +30,6 @@ class TokenRedis extends RedisRepository implements RedisTokenInterface
         return $this->key . ':' . $mark;
     }
 
-    // 用户端登录后需要JWT生成一个TOKEN   JWT类只有一个  但是存储TOKEN的仓库有三个 ，分别是ADMIN  BESSIEN  USER
-    // 在调用JWT的时候 如何区分应该使用哪一个仓库
     /**
      * 获取一个 token
      *
