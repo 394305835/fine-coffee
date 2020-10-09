@@ -18,6 +18,7 @@ namespace App\Model\Mysql;
  * ```sql
  * CREATE TABLE `fc_user` (
  * `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+ * `address_id` varchar(255) DEFAULT NULL COMMENT '用户配送地址',
  * `theme` varchar(255) DEFAULT NULL COMMENT '用户头像',
  * `username` varchar(255) DEFAULT NULL COMMENT '用户名',
  * `sex` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户性别',
@@ -35,6 +36,7 @@ class UserModel extends Model
 
     protected $attributes = [
         'id',
+        'address_id',
         'theme',
         'username',
         'sex',

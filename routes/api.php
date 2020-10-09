@@ -23,10 +23,33 @@ Route::namespace('Api')->middleware('cors')->group(function () {
     Route::namespace('V1')->prefix('v1')->group(function () {
         // 用户端
         Route::namespace('User')->group(function () {
+            //登录
+            Route::post('/user/login', 'LoginController@login');
+            Route::post('/user/logout', 'LoginController@logout');
+            Route::get('/user/sms', 'ApiController@getSMS');
+
+            // 用户-列表
+            Route::get('/users', 'UserController@index');
+            // 用户-新增
+            Route::post('/user', 'UserController@saveUser');
+
+            //配送地址管理增删改查
+            //配送地址 -列表
+            Route::get('/addresss', 'AddressController@index');
+            //配送地址 -新增
+            Route::post('/address', 'AddressController@saveAddress');
+            //配送地址 -修改
+            Route::put('/address', 'AddressController@saveAddress');
+            //配送地址 -删除
+            Route::delete('/address', 'AddressController@deleteAddress');
         });
+
+
         // 商家端
         Route::namespace('Business')->group(function () {
         });
+
+
         // 后台端
         Route::namespace('Admin')->group(function () {
             //登录，退出

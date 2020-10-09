@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests;
 
-/**
- * 用户登录请求实例
- */
-class UserLoginRequest extends BaseRequest
+
+class SMSRequest extends BaseRequest
 {
 
     /**
+     * 验证码
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -16,16 +15,14 @@ class UserLoginRequest extends BaseRequest
     public function rules()
     {
         return [
-            'username' => 'required',
-            'password' => 'required'
+            'phone' => 'required'
         ];
     }
 
     public function messages()
     {
         return [
-            'username.required' => '用户名不能为空0',
-            'password.integer'  => '密码不能为空',
+            'phone.required' => '手机号不能为空',
         ];
     }
 }

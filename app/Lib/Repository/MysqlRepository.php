@@ -153,7 +153,7 @@ abstract class MysqlRepository implements ReadRepository, DeleteRepository, Upda
 
     public function findBy(string $field, $value, $columns = ['*']): ?Model
     {
-        return $this->model->query()->where($field, $value)->first($this->getField($columns));
+        return $this->model->query()->where($field, $value)->first($this->field);
     }
 
     /**

@@ -39,6 +39,10 @@ class User extends MysqlRepository implements RepoUserInterface
     {
         return $this->findBy('username', $username);
     }
+    public function findByPhone(string $phone): ?UserModel
+    {
+        return $this->findBy('phone', $phone);
+    }
 
     /**
      * 用主键更新
@@ -63,5 +67,17 @@ class User extends MysqlRepository implements RepoUserInterface
     public function updateCipher(int $uid, string $cipher): bool
     {
         return $this->updateById($uid, ['cipher' => $cipher]);
+    }
+
+    /**
+     * 根据用户名和手机号来查询用户是否存在
+     * @param string $username
+     * @param string $phone
+     * @return ?UserModel
+     */
+    public function hasUserByUsernameOrPhone(string $username, string $phone): ?UserModel
+    {
+        return UserModel::singleton()->where('username', $username)
+            ->orWhere('phone', $phone)->first();
     }
 }

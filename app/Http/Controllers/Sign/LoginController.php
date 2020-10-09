@@ -11,6 +11,7 @@ class LoginController extends Controller
 {
     public function login(UserLoginRequest $req, UserService $svc)
     {
+        dd(2);
         return $this->api->reply($svc->login($req));
     }
 

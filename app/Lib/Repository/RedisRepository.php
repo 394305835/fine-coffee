@@ -37,8 +37,11 @@ abstract class RedisRepository
         $this->reids = app('redis');
     }
 
-    public function getKey()
+    public function getKey(string $mark = ''): string
     {
+        if ($mark) {
+            return $this->key . ':' . $mark;
+        }
         return $this->key;
     }
 }

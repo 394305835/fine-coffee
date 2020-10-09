@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Lib\RestFul\JsonAPI;
-use App\Lib\RestFul\RESTFulAPI;
 use App\Lib\RetJson;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
