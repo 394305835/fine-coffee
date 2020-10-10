@@ -8,9 +8,10 @@ namespace App\Repositories\Token;
 class AdminToken extends Token
 {
 
+    const IDN = 'admin';
     public function __construct()
     {
         parent::__construct();
-        $this->key = $this->getKey('admin');
+        $this->key = $this->getKey(SELF::IDN);
     }
 }

@@ -25,9 +25,7 @@ class UserIndexRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => '',
             'search' => '', // 搜索内容，可按 id 和昵称搜索
-            'status'    => 'in:0,1', // 状态 1正常 0禁用
             'orderBy'   => '', // 排序字段 ['id', 'login_time'], 使用数值
             'order'     => '', // 排序方式 0:asc 或 1:desc, 使用数值
             'page'     => 'integer|min:0', // 页条数

@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Contracts\RestFul\RESTFulAPI;
 use App\Contracts\Service\LogServiceInterface;
 use App\Contracts\Token\TokenInterface;
-use App\Lib\Jwt\AdminJwt;
 use App\Lib\Jwt\UserJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
@@ -70,7 +69,7 @@ class AuthUserApi
         /**
          * 用户身份ID
          */
-        define('REQUEST_UID', $this->token->getPayload()->uid);
+        define('USER_UID', $this->token->getPayload()->uid);
 
         // $this->log->write();
 

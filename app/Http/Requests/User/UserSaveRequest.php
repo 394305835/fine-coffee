@@ -26,12 +26,8 @@ class UserSaveRequest extends BaseRequest
     {
         return [
             // LINK#1 限制组个数
-            'adress_id' => 'integer|min:0', // 限制只能是一个组 
-            'id' => 'integer|min:0', // 管理员ID, 最小0,用于编辑修改
-            'username' => 'required', // 用户名
             'theme' => '', // 头像
-            'sex' => 'required', // 性别
-            'phone' => 'required|integer', // 手机号
+            'sex' => '', // 性别
         ];
     }
 

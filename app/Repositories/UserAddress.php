@@ -5,9 +5,10 @@ namespace App\Repositories;
 use App\Contracts\Repositories\RepoUserInterface;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\Model;
-use App\Model\Mysql\UserModel;
+use App\Model\Mysql\UserAddressModel;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class User extends MysqlRepository implements RepoUserInterface
+class UserAddress extends MysqlRepository
 {
     const IS_DECRYPT = 1;
     const NOT_DECRYPT = 0;
@@ -20,7 +21,7 @@ class User extends MysqlRepository implements RepoUserInterface
      */
     public function makeModel(): Model
     {
-        return UserModel::singleton();
+        return UserAddressModel::singleton();
     }
 
     /**
@@ -28,20 +29,39 @@ class User extends MysqlRepository implements RepoUserInterface
      *
      * @Override
      * @param integer $id
-     * @return UserModel|null
+     * @return UserAddressModel|null
      */
-    public function findById(int $id): ?UserModel
+    public function findById(int $id): ?UserAddressModel
     {
         return $this->findBy('id', $id);
     }
-    public function findByUsername(string $username): ?UserModel
+
+    public function findByUsername(string $username): ?UserAddressModel
     {
         return $this->findBy('username', $username);
     }
-    public function findByPhone(string $phone): ?UserModel
+    public function getAddressByKey(int $id, int $uid): ?UserAddressModel
+    {
+        return $this->model->query()->where('id', $id)->where('user_id', $uid)->first();
+    }
+    public function findByPhone(string $phone): ?UserAddressModel
     {
         return $this->findBy('phone', $phone);
     }
+    public function deleteAddressByKey(int $id, int $uid): bool
+    {
+        return !!$this->model->query()->where('id', $id)->where('user_id', $uid)->delete();
+    }
+    public function queryAddressByUserId(int $uid, array $sort, int $limit): LengthAwarePaginator
+    {
+        $res = $this->model->query()->where('user_id', $uid);
+        foreach ($sort as $key => $value) {
+            // order_by只能一次此掉(同where)
+            $res = $res->orderBy($key, $value);
+        }
+        return $res->paginate($limit, $this->field);
+    }
+
     /**
      * 用主键更新
      *
@@ -71,22 +91,11 @@ class User extends MysqlRepository implements RepoUserInterface
      * 根据用户名和手机号来查询用户是否存在
      * @param string $username
      * @param string $phone
-     * @return ?UserModel
+     * @return ?UserAddressModel
      */
-    public function hasUserByUsernameOrPhone(string $username, string $phone): ?UserModel
+    public function hasUserByUsernameOrPhone(string $username, string $phone): ?UserAddressModel
     {
-        return UserModel::singleton()->where('username', $username)
+        return UserAddressModel::singleton()->where('username', $username)
             ->orWhere('phone', $phone)->first();
-    }
-
-    /**
-     * 用ID查询用户个人信息
-     *
-     * @param [type] $uid
-     * @return void
-     */
-    public function getUserInfoById($uid)
-    {
-        return UserModel::singleton()->select($this->field)->where('id', $uid)->first();
     }
 }

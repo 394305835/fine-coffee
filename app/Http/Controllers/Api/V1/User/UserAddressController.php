@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IDRequest;
 use App\Http\Requests\IDsRequest;
 use App\Http\Requests\User\UserAddressIndexRequest;
-use App\Http\Requests\User\UserAddressSaveRequest as UserUserAddressSaveRequest;
+use App\Http\Requests\User\UserAddressSaveRequest;
+use App\Http\Requests\User\UserAddressAddRequest;
 use App\Http\Requests\UserIndexRequest;
 use App\Http\Requests\UserSaveRequest;
 use App\Http\Services\User\UserAddressService;
@@ -34,7 +35,18 @@ class UserAddressController extends Controller
      * @param YhService $service
      * @return PsrResponseInterface
      */
-    public function saveAdmin(UserUserAddressSaveRequest $request, UserAddressService $service)
+    public function addAddress(UserAddressAddRequest $request, UserAddressService $service)
+    {
+        return $this->api->reply($service->addUserAddress($request));
+    }
+    /**
+     * 用户管理-用户-配送地址修改
+     *
+     * @param UserSaveRequest $request
+     * @param YhService $service
+     * @return PsrResponseInterface
+     */
+    public function saveAddress(UserAddressSaveRequest $request, UserAddressService $service)
     {
         return $this->api->reply($service->saveUserAddress($request));
     }
@@ -45,7 +57,7 @@ class UserAddressController extends Controller
      * @param UserAddressService $service
      * @return PsrResponseInterface
      */
-    public function deleteAdmin(IDRequest $request, UserAddressService $service)
+    public function deleteAddress(IDRequest $request, UserAddressService $service)
     {
         return $this->api->reply($service->deleteUserAddress($request));
     }

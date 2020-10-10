@@ -13,6 +13,32 @@ use App\Repositories\User;
  */
 class YhService extends UserBaseService
 {
+
+
+    /**
+     * 获取个人用户列表
+     */
+    public function getUserInfo($request): RetInterface
+    {
+        // 2.2.2.由于获取用户接口是认证后的，可以直接知道用户的ID（一般用常量保存起来）
+        // USER_UID;
+        // 2.2.3 . 将用户ID交给仓库代查用户的信息
+        $user = User::singleton()->getUserInfoById(USER_UID);
+        // 然后返回给2.2
+        return RetJson::pure()->entity($user);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 获取用户列表
      */

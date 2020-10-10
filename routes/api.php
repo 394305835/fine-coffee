@@ -28,22 +28,25 @@ Route::namespace('Api')->middleware('cors')->group(function () {
             Route::post('/logout', 'LoginController@logout');
             Route::get('/sms', 'ApiController@getSMS');
 
-            Route::middleware('auth.user.api')->group(function(){
+            Route::middleware('auth.user.api')->group(function () {
+                // 获取用户个人信息
+                Route::get('/info', 'UserController@getUserInfo');
+
                 // 用户-列表
                 Route::get('/list', 'UserController@index');
                 // 用户-新增
                 Route::post('/user', 'UserController@saveUser');
-    
+
                 //配送地址管理增删改查
                 //配送地址 -列表
-                Route::get('/addresss', 'AddressController@index');
+                Route::get('/address', 'UserAddressController@index');
                 //配送地址 -新增
-                Route::post('/address', 'AddressController@saveAddress');
+                Route::post('/address', 'UserAddressController@addAddress');
                 //配送地址 -修改
-                Route::put('/address', 'AddressController@saveAddress');
+                Route::put('/address', 'UserAddressController@saveAddress');
                 //配送地址 -删除
-                Route::delete('/address', 'AddressController@deleteAddress');
-            })
+                Route::delete('/address', 'UserAddressController@deleteAddress');
+            });
         });
 
 

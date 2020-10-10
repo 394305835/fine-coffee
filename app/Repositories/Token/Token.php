@@ -10,7 +10,6 @@ use App\Lib\Repository\RedisRepository;
  */
 class Token extends RedisRepository implements RedisTokenInterface
 {
-
     protected $key = 'codebook:jwt';
 
 

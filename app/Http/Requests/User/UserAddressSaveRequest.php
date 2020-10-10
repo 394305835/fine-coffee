@@ -25,13 +25,14 @@ class UserAddressSaveRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => '',
-            'search' => '', // 搜索内容，可按 id 和昵称搜索
-            'status'    => 'in:0,1', // 状态 1正常 0禁用
-            'orderBy'   => '', // 排序字段 ['id', 'login_time'], 使用数值
-            'order'     => '', // 排序方式 0:asc 或 1:desc, 使用数值
-            'page'     => 'integer|min:0', // 页条数
-            'limit'    => 'integer|min:5', // 页条数
+            'id' => 'required|integer|min:0', //要修改的id
+            'name' => '', //用户姓名
+            'sex' => '', //性别
+            'phone'    => '', //手机号码
+            'address'   => '', //配送地址
+            'address_detailed'     => '', // 详细配送地址
+            'tag'     => '', //配送地址类型(家，学校，公司)
+            'is_default_address'    => '', //是否是默认地址
         ];
     }
 

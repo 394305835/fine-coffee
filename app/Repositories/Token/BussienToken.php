@@ -7,10 +7,10 @@ namespace App\Repositories\Token;
  */
 class BussienToken extends Token
 {
-
+    const IDN = 'bussien';
     public function __construct()
     {
         parent::__construct();
-        $this->key = $this->getKey('bussien');
+        $this->key = $this->getKey(self::IDN);
     }
 }

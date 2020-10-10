@@ -7,7 +7,6 @@ namespace App\Repositories\Token;
  */
 class UserToken extends Token
 {
-
     const IDN = 'user';
     public function __construct()
     {

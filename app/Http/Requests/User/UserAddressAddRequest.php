@@ -8,7 +8,7 @@ use App\Http\Requests\BaseRequest;
  * 用户管理-获取
  * @author qrj
  */
-class UserAddressIndexRequest extends BaseRequest
+class UserAddressAddRequest extends BaseRequest
 {
 
     /**
@@ -25,11 +25,13 @@ class UserAddressIndexRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'search' => '', // 搜索内容，可按 id 和昵称搜索 这三个在验证器中均无法验证，只有在服务层做
-            'orderBy'   => '', // 排序字段  这三个在验证器中均无法验证，只有在服务层做
-            'order'     => '', // 排序方式  这三个在验证器中均无法验证，只有在服务层做
-            'page'     => 'integer|min:0', // 页条数
-            'limit'    => 'integer|min:5', // 页条数
+            'name' => 'required', //用户姓名
+            'sex' => 'required', //性别
+            'phone'    => 'required', //手机号码
+            'address'   => 'required', //配送地址
+            'address_detailed'     => 'required', // 详细配送地址
+            'tag'     => '', //配送地址类型(家，学校，公司)
+            'is_default_address'    => '', //是否是默认地址
         ];
     }
 
