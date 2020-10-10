@@ -6,6 +6,7 @@ namespace App\Http\Services\Admin\AuthService;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Contracts\Token\TokenInterface;
 use App\Http\Requests\AuthAdminLoginRequest;
+use App\Lib\Jwt\AdminJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use App\Repositories\AuthAdmin;
@@ -18,9 +19,9 @@ class LoginService
      * @var TokenInterface
      */
     protected $token;
-    public function __construct(TokenInterface $token)
+    public function __construct()
     {
-        $this->token = $token;
+        $this->token = AdminJwt::singleton();
     }
 
     /**

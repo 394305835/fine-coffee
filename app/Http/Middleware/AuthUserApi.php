@@ -6,11 +6,12 @@ use App\Contracts\RestFul\RESTFulAPI;
 use App\Contracts\Service\LogServiceInterface;
 use App\Contracts\Token\TokenInterface;
 use App\Lib\Jwt\AdminJwt;
+use App\Lib\Jwt\UserJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use Illuminate\Http\Request;
 
-class AuthApi
+class AuthUserApi
 {
     /**
      * 日志服务
@@ -35,7 +36,7 @@ class AuthApi
 
     public function __construct(RESTFulAPI $api)
     {
-        $this->token = AdminJwt::singleton();
+        $this->token = UserJwt::singleton();
         $this->api = $api;
     }
 

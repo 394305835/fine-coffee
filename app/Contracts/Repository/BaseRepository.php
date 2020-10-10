@@ -10,7 +10,7 @@ trait BaseRepository
      *
      * @var array
      */
-    protected static $repo = [];
+    protected static $_repo = [];
 
     /**
      * 得到一个单例的对象
@@ -21,10 +21,10 @@ trait BaseRepository
     public static function singleton(...$fields): self
     {
         $key = static::class;
-        if (!isset(static::$repo[$key])) {
-            static::$repo[$key] = static::factory(...$fields);
+        if (!isset(static::$_repo[$key])) {
+            static::$_repo[$key] = static::factory(...$fields);
         }
-        return static::$repo[$key];
+        return static::$_repo[$key];
     }
 
     /**

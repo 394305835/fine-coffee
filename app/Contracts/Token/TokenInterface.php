@@ -10,11 +10,4 @@ interface TokenInterface
     public function check(string $token): bool;
     public function refresh(string $token): bool;
     public function invalid(string $token): bool;
-
-    /**
-     * 该方法区分使用哪个存储token的仓库
-     *
-     * @param Token $token
-     */
-    public function use($token);
 }

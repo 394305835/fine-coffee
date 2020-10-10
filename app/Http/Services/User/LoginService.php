@@ -5,6 +5,7 @@ namespace App\Http\Services\User;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Contracts\Token\TokenInterface;
 use App\Http\Requests\User\UserLoginRequest;
+use App\Lib\Jwt\UserJwt;
 use App\Lib\RetJson;
 use App\Repositories\SMS;
 use App\Repositories\User;
@@ -27,10 +28,10 @@ class LoginService extends UserBaseService
      * @var $Token
      */
     protected $UserToken;
-    public function __construct(TokenInterface $token)
+    public function __construct()
     {
         $this->UserToken = UserToken::singleton();
-        $this->token = $token->use($this->UserToken);
+        $this->token = UserJwt::singleton();
     }
 
     /**

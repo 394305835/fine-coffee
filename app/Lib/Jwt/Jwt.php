@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Lib;
+namespace App\Lib\Jwt;
 
+use App\Contracts\Repository\BaseRepository;
 use App\Contracts\Token\TokenInterface;
 use App\Lib\Constans;
-use App\Repositories\Token\AdminToken;
-use App\Repositories\Token\Token;
 
 /**
  * JWT 认证
@@ -17,10 +16,11 @@ use App\Repositories\Token\Token;
  * openssl rsa -in pri_key.pem -pubout -out pub_key.pem
  * ```
  */
-class Jwt extends \Firebase\JWT\JWT implements TokenInterface
+abstract class Jwt extends \Firebase\JWT\JWT implements TokenInterface
 {
+    use BaseRepository;
 
-    private $privateKey = <<<EOF
+    protected $privateKey = <<<EOF
 -----BEGIN RSA PRIVATE KEY-----
 MIICXwIBAAKBgQCsGrqBPGNyqB0ZteHWZCDK299M30F+99N13r+ZzjsTEjsotdmL
 TnbG8bj60P6fzQE17+zq5sPHE8Dx3Rt+YL01qw/NMuvVrxF9Pa6mUQ2F89lNgn/p
@@ -38,7 +38,7 @@ O//BsrvKt4tznX59KaepbQJBANSJ7M39RMCbTMFxxURVyxRFW5pm8j0dWpfswAqo
 -----END RSA PRIVATE KEY-----
 EOF;
 
-    private $publicKey = <<<EOF
+    protected $publicKey = <<<EOF
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCsGrqBPGNyqB0ZteHWZCDK299M
 30F+99N13r+ZzjsTEjsotdmLTnbG8bj60P6fzQE17+zq5sPHE8Dx3Rt+YL01qw/N
@@ -62,42 +62,7 @@ EOF;
      */
     private $alg = 'RS256';
 
-    /**
-     * redis 实例
-     *
-     * @var Token
-     */
-    protected $Token;
-
     public function __construct()
-    {
-        // $this->Token = TokenRedis::singleton();
-        //默认就是后台存储Token的仓库
-        $this->use(AdminToken::singleton());
-    }
-
-    /**
-     * 该方法区分使用哪个存储token的仓库
-     *
-     * @param Token $token
-     */
-    public function use($token)
-    {
-        $this->Token = $token;
-        return $this;
-    }
-
-    public function getPayload(string $token = ''): \stdClass
-    {
-        return $this->parse($token);
-    }
-
-    /**
-     *
-     * @param int $uid
-     * @return string
-     */
-    protected function make(int $uid): string
     {
         $iat = time();
         $this->payload = (object) [
@@ -106,8 +71,20 @@ EOF;
             "iat" => $iat, //签发时间
             "nbf" => $iat, //在什么时候jwt开始生效
             "exp" => $iat + Constans::TOKEN_EXP_TIME, //token 过期时间
-            "uid" => $uid,
+            "uid" => 0,
+            "idn" => 0,
         ];
+    }
+
+    /**
+     *
+     * @param int $uid
+     * @return string
+     */
+    protected function make(int $uid, string $idn): string
+    {
+        $this->payload->uid = $uid;
+        $this->payload->idn = $idn;
         return static::encode($this->payload, $this->privateKey, $this->alg);
     }
 
@@ -130,71 +107,12 @@ EOF;
         return static::decode($token, $this->publicKey, [$this->alg]);
     }
 
-    /**
-     * 创建一个 token 并存入 redis
-     *
-     * @param array $payload
-     * @return string
-     */
-    public function create(array $payload): string
+    public function getPayload(string $token = ''): \stdClass
     {
-        if (empty($uid = (int) $payload['uid']) || !is_numeric($uid)) {
-            return '';
-        }
-        $token = $this->make($uid);
-        // 有效时间 = 过期时间 - 当前时间
-        return $this->Token->create($uid, $token, $this->payload->exp - time()) ? $token : '';
+        return $this->payload;
     }
-
-    /**
-     * 检查一个 token 与 在 redis 中用户的 token 是否一致
-     *
-     * @param string $token
-     * @return boolean
-     */
-    public function check(string $token): bool
-    {
-        try {
-            $this->payload = $this->parse($token);
-            // 与 redis 中比较
-            $rediToken = $this->Token->getToken((int) $this->payload->uid);
-            return empty($rediToken) ? false : $token === $rediToken;
-        } catch (\Throwable $th) {
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * 刷新TOKEN.
-     *
-     * PS:该方法最好是在验证ok后调用
-     *
-     * @param string $token
-     * @return boolean
-     */
-    public function refresh(string $token): bool
-    {
-        $payload = $this->parse($token);
-        // 如果一个天后将过期则刷新，否则不刷新
-        if ($payload->exp - time() < Constans::TIME_DAY) {
-            return $this->Token->create($payload->uid, $token, time() + Constans::TIME_DAY);
-        }
-        return true;
-    }
-
-    /**
-     * 作废 token
-     *
-     * PS:就是从redis删除该用户TOKEN
-     *
-     * @return boolean
-     */
-    public function invalid(string $token): bool
-    {
-        if (!$this->payload->uid) {
-            return false;
-        }
-        return $this->Token->remove($this->payload->uid);
-    }
+    abstract public function create(array $payload): string;
+    abstract public function check(string $token): bool;
+    abstract public function refresh(string $token): bool;
+    abstract public function invalid(string $token): bool;
 }
