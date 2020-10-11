@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Controllers\Controller;
