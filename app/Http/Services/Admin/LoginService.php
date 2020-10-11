@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Services\Admin\AuthService;
+namespace App\Http\Services\Admin;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Contracts\Token\TokenInterface;

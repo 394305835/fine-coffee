@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services\Admin\AuthService;
 
 use App\Lib\Tree;
 use App\Repositories\AuthAccess;
@@ -9,7 +9,7 @@ use App\Repositories\AuthAccess;
  * 
  */
 
-class AuthService extends AuthBaseService
+class Auth extends AuthBase
 {
     /**
      * 获取用户组信息
@@ -27,10 +27,10 @@ class AuthService extends AuthBaseService
      * ps: Admin->rule
      * Admin.uid->access.group_id.  group_id->rules(value)->rule.id
      */
-    public function getUserRules($uid, $field = [])
+    public function getUserRules(int $uid, array $params = [], array $field = [])
     {
         $groupIds = $this->getGroupAccessGroupIds([$uid]);
-        return  $this->getRules($groupIds, $field);
+        return $this->getRules($groupIds, $params, $field);
     }
 
     /**

@@ -8,6 +8,8 @@ use App\Model\Mysql\Model;
 
 class AuthRule extends MysqlRepository
 {
+    const TYPE_ROUTER = 'router';
+    const TYPE_API = 'api';
     /**
      * 创建当前仓库的模型对象
      *

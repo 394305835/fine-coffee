@@ -20,17 +20,19 @@ Route::namespace('Sign')->middleware('cors')->group(function () {
 
 
 // 后台端
-Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function () {
-    //登录，退出
+Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function () {    
     Route::post('/login', 'AuthAdminController@login');
     Route::post('/logout', 'AuthAdminController@logout');
 
-    //验证token访问的接口
+
+    // 后台权限
     Route::middleware('auth.api')->group(function () {
-        //验证API
+        // 后台 api
         //个人信息获取
         Route::get('/info', 'AuthAdminController@getUserInfo');
-        //验证权限
+        Route::get('/menus', 'ApiController@getMenus');
+
+        // 验证权限
         // 管理员管理
         // 管理员-列表
         Route::get('/admins', 'AuthAdminController@index');

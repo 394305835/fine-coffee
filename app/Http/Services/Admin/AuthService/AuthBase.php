@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services\Admin\AuthService;
 
 use App\Model\Mysql\AuthGroupAccessModel;
 use App\Model\Mysql\AuthGroupModel;
@@ -14,7 +14,7 @@ use App\Repositories\AuthGroup;
  * 3. 访问权限 
  */
 
-class AuthBaseService
+class AuthBase
 {
     /**
      * 检查权限,检查两个集合中是否存在包含或相同
@@ -120,17 +120,24 @@ class AuthBaseService
      * 获取组信息对应的规则列表信息
      * ps: group->rule
      */
-    public function getRules(array $groupIds, $field = [])
+    public function getRules(array $groupIds, array $where = [], $field = []): array
     {
         $rulesId = $this->getRuleIdsByGroup($groupIds);
         if (empty($field)) {
             $field = ['id', 'pid', 'type', 'path', 'title', 'icon'];
         }
+
+        $rules = AuthRuleModel::select($field);
+
         // TIP#1 超管权限
-        if (in_array('*', $rulesId)) {
-            return AuthRuleModel::select($field)->get()->toArray();
+        if (!in_array('*', $rulesId)) {
+            $rules = $rules->whereIn('id', $rulesId);
         }
-        return AuthRuleModel::select($field)->whereIn('id', $rulesId)->get()->toArray();
+
+        if (!empty($where)) {
+            $rules = $rules->where($where);
+        }
+        return $rules->get()->toArray();
 
         /**
          * 获取组信息对应的规则列表，规则列表的ID号在group组中的rule字段。

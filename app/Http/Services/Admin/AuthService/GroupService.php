@@ -5,12 +5,11 @@ namespace App\Http\Services\Admin\AuthService;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\AuthGroupSaveRequest;
-use App\Http\Services\Admin\AuthService;
 use App\Lib\RetJson;
 use App\Repositories\AuthGroup;
 use Illuminate\Http\Request;
 
-class GroupService extends AuthService
+class GroupService extends Auth
 {
     /**
      * 权限管理-角色组-列表获取

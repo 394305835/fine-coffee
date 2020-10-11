@@ -11,7 +11,7 @@ use App\Lib\Tree;
 use App\Repositories\AuthRule;
 use Illuminate\Http\Request;
 
-class RuleService extends AuthService
+class RuleService extends Auth
 {
     /**
      * 权限管理-菜单规则-列表获取
@@ -21,7 +21,7 @@ class RuleService extends AuthService
      */
     public function getRuleList(Request $request): RetInterface
     {
-        $rules = $this->getUserRules(REQUEST_UID, ['id', 'pid', 'title']);
+        $rules = $this->getUserRules(REQUEST_UID, [], ['id', 'pid', 'title']);
         return RetJson::pure()->list($rules);
     }
 
@@ -31,9 +31,13 @@ class RuleService extends AuthService
      * @param Request $request
      * @return RetInterface
      */
-    public function getSelect(Request $request): RetInterface
+    public function getSelect(Request $request, string $type = ''): RetInterface
     {
-        $rules = $this->getUserRules(REQUEST_UID, ['id', 'pid', 'title']);
+        $where = [];
+        if ($type == AuthRule::TYPE_API || $type == AuthRule::TYPE_ROUTER) {
+            $where[] = ['type', '=', $type];
+        }
+        $rules = $this->getUserRules(REQUEST_UID, $where, ['id', 'pid', 'title']);
         $rules = Tree::create($rules);
         return RetJson::pure()->list($rules);
     }

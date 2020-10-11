@@ -9,7 +9,7 @@ use App\Http\Requests\AuthAdminLoginRequest;
 use App\Http\Requests\AuthAdminSaveRequest;
 use App\Http\Requests\IDsRequest;
 use App\Http\Services\Admin\AuthService\AdminService;
-use App\Http\Services\Admin\AuthService\LoginService;
+use App\Http\Services\Admin\LoginService;
 use Illuminate\Http\Request;
 
 class AuthAdminController extends Controller
