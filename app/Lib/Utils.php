@@ -31,4 +31,44 @@ class Utils
     {
         return md5($uid . $plaint);
     }
+
+    /**
+     * 获取一个某个类的类名（不是全路径，只有类名）
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getClassName(string $class_): string
+    {
+        //   \\两个反斜杠表示转义的意思(我们这里写一个表示特殊的)
+        $cs = explode('\\', $class_);
+        //取数组的最后一个函数
+        return end($cs);
+    }
+
+    /**
+     * 返回一个字符串组成的路径
+     * 
+     * 目前只支撑驼峰命名的字符串
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function toPath(string $path): string
+    {
+        //空串代表一个一个分隔
+        $path = str_split($path);
+        $result = '';
+        foreach ($path as $word) {
+            //获取一个字符的ascll码
+            $str = ord($word);
+            if ($str > 64 && $str < 91) {
+                //strtolower($str) 转换为小写字母
+                $result = $result . DIRECTORY_SEPARATOR . strtolower($word);
+                continue;
+            }
+            $result = $result . $word;
+        }
+        return $result;
+    }
 }

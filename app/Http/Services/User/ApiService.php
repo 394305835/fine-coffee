@@ -2,11 +2,18 @@
 
 namespace App\Http\Services\User;
 
+use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\SMSRequest;
 use App\Lib\Constans;
+use App\Lib\File\FileService;
+use App\Lib\File\UserTheme;
 use App\Lib\RetJson;
 use App\Repositories\SMS;
+use App\Repositories\User;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\URL;
 
 /**
  * 验证码
@@ -42,5 +49,42 @@ class ApiService extends UserBaseService
         } catch (\Throwable $th) {
             return RetJson::pure()->error('网络错误');
         }
+    }
+
+    /**
+     * 修改用户头像
+     * @param Request $request
+     * @return RetInterface
+     */
+    public function saveUserTheme(Request $request): RetInterface
+    {
+        // 1. 接受到文件
+        // 2. 将文件保存到服务器上
+        // 3. 得到该文件在服务器上的相对路径
+        // 4. 将该相对路径保存到用户的使用字段里面去
+        // 5. 返回提示信息或者文件相对路径
+        //1\
+        // TODO
+        // echo str_replace("", "index.php", "http://local.coffee.com:8081/index.php");
+        // exit;
+
+        $file = $request->file('theme');
+        $fs = new UserTheme();
+        if (!$fs->isImage($file)) {
+            return RetJson::pure()->msg('请上传图片');
+        }
+        //2,3
+        $path = $fs->up($file, USER_UID);
+        $prefix = URL::previous();
+        // TODO 路径需要替换,需要取得一个完整的域名
+        $prefix = str_replace('', 'index.php', $prefix);
+
+        // dd($prefix);
+
+        $path = $fs->padPath(URL::previous(), $path);
+        //4
+        User::singleton()->updateById(USER_UID, ['theme' => $path]);
+        //5
+        return RetJson::pure()->entity($path);
     }
 }

@@ -80,10 +80,15 @@ Route::namespace('User')->prefix('user')->middleware('cors')->group(function () 
         // 获取用户个人信息
         Route::get('/info', 'UserController@getUserInfo');
 
-        // 用户-列表
-        Route::get('/list', 'UserController@index');
-        // 用户-新增
-        Route::post('/user', 'UserController@saveUser');
+        // // 用户-列表
+        // Route::get('/list', 'UserController@index');
+        // 用户-修改
+        Route::put('/user', 'UserController@saveUser');
+        // 用户-文件上传
+        /**
+         * 
+         */
+        Route::post('/upload', 'ApiController@upLoadFile');
 
         //配送地址管理增删改查
         //配送地址 -列表

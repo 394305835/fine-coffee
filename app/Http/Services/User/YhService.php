@@ -48,23 +48,33 @@ class YhService extends UserBaseService
     }
 
     /**
-     * 添加用户信息
+     * 修改用户信息
      */
     public function saveUser(UserSaveRequest $request): RetInterface
     {
         /**
-         * 拿到用户要添加的信息
-         * 判断用户是否存在--判断手机是否存在
-         * 将数据添加到数据表中去
+         * 1. 拿到要修改用户的UID  
+         * 2. 拿到用户要修改的信息(头像，用户名，性别)
+         * 3. 判断哪个字段有值，需要修改的
+         * 4. 将数据添加到数据库中去
+         * 5. 返回提示信息
+         * 
          */
-        //$post代表从验证器中拿到的数据,代表要添加的列表
-        $post = $request->only(array_keys($request->rules()));
-        $user = User::singleton()->hasUserByUsernameOrPhone($post['username'], $post['phone']);
-        if (empty($user)) {
-            User::singleton()->insert($post);
-            return RetJson::pure()->msg('添加成功');
-        } else {
-            return RetJson::pure()->error('已存在');
+            $post = $request->only(array_keys($request->rules()));
+            if(empty($post)){
+                return RetJson::pure()->msg('修改成功');
+            }
+            $bean=[];
+            if(!empty($post['username'])){
+                $bean['username']=$post['username'];
+            }
+            if(!empty($post['theme'])){
+                $bean['theme']=$post['theme'];
+            }
+            if(!empty($post['sex'])){
+                $bean['sex']=$post['sex'];
+            }
+            User::singleton()->updateById(USER_UID,$bean);
+            return RetJson::pure()->msg('修改成功');
         }
-    }
 }

@@ -14,4 +14,7 @@ class Constans
     const TIME_DAY = 86400; // 一天 60 * 60 * 24
 
     const TOKEN_EXP_TIME = 604800; // 86400 * 7 = 7天
+
+    const MIME_IMAGE_PNG = 'image/png';    //PNG图片类型
+    const MIME_IMAGE_JPEG = 'image/jpeg';   //JPEG图片
 }

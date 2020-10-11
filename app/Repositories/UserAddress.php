@@ -56,7 +56,7 @@ class UserAddress extends MysqlRepository
     {
         $res = $this->model->query()->where('user_id', $uid);
         foreach ($sort as $key => $value) {
-            // order_by只能一次此掉(同where)
+            // order_by只能一次次掉(同where)
             $res = $res->orderBy($key, $value);
         }
         return $res->paginate($limit, $this->field);

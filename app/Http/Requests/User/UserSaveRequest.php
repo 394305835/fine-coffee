@@ -28,6 +28,7 @@ class UserSaveRequest extends BaseRequest
             // LINK#1 限制组个数
             'theme' => '', // 头像
             'sex' => '', // 性别
+            'username' => '', // 姓名
         ];
     }
 

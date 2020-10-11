@@ -26,20 +26,20 @@ class UserController extends Controller
         return $this->api->reply($res);
     }
 
-    /**
-     * 用户-列表
-     *
-     * @param UserIndexRequest $request
-     * @param UserService $service
-     * @return PsrResponseInterface
-     */
-    public function index(UserIndexRequest $request, YhService $service)
-    {
-        return $this->api->reply($service->getUserList($request));
-    }
+    // /**
+    //  * 用户-列表
+    //  *
+    //  * @param UserIndexRequest $request
+    //  * @param UserService $service
+    //  * @return PsrResponseInterface
+    //  */
+    // public function index(UserIndexRequest $request, YhService $service)
+    // {
+    //     return $this->api->reply($service->getUserList($request));
+    // }
 
     /**
-     * 用户管理-用户-新增
+     * 用户管理-用户-修改
      *
      * @param UserSaveRequest $request
      * @param YhService $service
