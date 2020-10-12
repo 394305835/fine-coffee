@@ -10,6 +10,7 @@ use App\Lib\Jwt\AdminJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use App\Repositories\AuthAdmin;
+use App\Repositories\Token\AdminToken;
 use App\Repositories\TokenRedis;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class LoginService
             }
 
             // 获取 token 是否已经存在
-            if (!$token = TokenRedis::singleton()->getToken($user->id)) {
+            if (!$token = AdminToken::singleton()->getToken($user->id)) {
                 $repeat = false;
                 $token = $this->token->create(['uid' => $user->id]);
             }
