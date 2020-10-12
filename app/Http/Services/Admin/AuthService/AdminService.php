@@ -25,7 +25,7 @@ class AdminService extends Auth
         $adminInfo = AuthAdmin::singleton('id', 'username', 'nickname', 'avatar', 'email')
             ->getAdminById(REQUEST_UID)->toArray();
         $groups = $this->getUserGroup(REQUEST_UID);
-        $adminInfo['name'] = array_column($groups->toarray(), 'name');
+        $adminInfo['roles'] = array_column($groups->toarray(), 'name');
         // $adminInfo['name'] = [];
         // foreach ($groups as $_group) {
         //     $adminInfo['name'][] = $_group->name;
