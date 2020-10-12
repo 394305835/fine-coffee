@@ -11,7 +11,6 @@ use App\Lib\RetCode;
 use App\Lib\RetJson;
 use App\Repositories\AuthAdmin;
 use App\Repositories\Token\AdminToken;
-use App\Repositories\TokenRedis;
 use Illuminate\Http\Request;
 
 class LoginService
@@ -80,7 +79,7 @@ class LoginService
         if ($token) {
             $payload = $this->token->getPayload($token);
             if ($payload && $payload->uid) {
-                TokenRedis::singleton()->remove($payload->uid);
+                AdminToken::singleton()->remove($payload->uid);
             }
         }
         return RetJson::pure()->msg();
