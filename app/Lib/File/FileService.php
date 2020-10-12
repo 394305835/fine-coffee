@@ -2,33 +2,61 @@
 
 namespace App\Lib\File;
 
+use App\Contracts\RestFul\Ret\RetInterface;
 use App\Lib\Utils;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 /**
- * 提供文件相关服务
+ * 提供文件相关服务.
+ * 
+ * 如果处理的是上传文件,则会将文件保存至项目根目录的 `storage/app/` 下
  */
 class FileService
 {
+    /**
+     * 当前处理文件的UUID
+     *
+     * @var string
+     */
+    protected $uuid;
 
+    /**
+     * 即将处理的文件路径
+     *
+     * @var string
+     */
     protected $path;
 
     /**
-     * Undocumented function
+     * 即将处理的文件名
      *
-     * @param string $path
+     * @var string
      */
+    protected $filename;
+
+    /**
+     * 记录当前处理的文件是否处理完成
+     *
+     * @var bool
+     */
+    protected $finished;
+
     public function __construct(string $path = '')
     {
         $this->path = empty($path) ? 'public' : $path;
+        $this->uuid = Str::uuid();
+        $this->finished = false;
     }
+
     /**
-     * 提供文件上传服务
+     * 处理文件上传.
      *
-     * @param UploadedFile $file
-     * @return string 返回文件所在服务器相对路径
+     * @Override
+     * @param UploadedFile $file 接收处理的文件
+     * @return FilePath|null
      */
-    public function up(UploadedFile $file, string $mark = ''): string
+    public function upload(UploadedFile $file): ?FilePath
     {
         // 1. 明确保存文件的路径
         // 2. 保存文件
@@ -36,20 +64,57 @@ class FileService
         //1 $path
         //  2 
         // Storage::disk('local')->put('file.txt', 'Contents');
-        //获取文件名的后缀名
-        $entension = $file->getClientOriginalExtension();
-        // 有文件名就拼上mark  给默认文件名 当前时间戳+随机字符串
-        $fileName = $mark ? $mark : time();
-        //拼接文件名+后缀名用md5包起来
-        $fileName = md5($this->path . $fileName) . '.' . $entension;
+
+        //获取文件名的后缀名,得到一个新的文件名
+        $fileName = $this->parseFilenmae($file->getClientOriginalExtension());
         $realPath = $file->storePubliclyAs($this->path, $fileName);
-        return $realPath ? $this->padPath('upload', $realPath) : '';
+
+        if ($realPath) {
+            $this->finished = true;
+            return new FilePath($realPath);
+        }
+
+        return null;
     }
 
-
-    public function down()
+    /** 
+     * 解析出一个文件名.
+     * 
+     * 新的文件名解析格式: md5(当前文件保存路径 + 指定文件名) + 后缀名
+     * 
+     * @param string $fileExt 指定一个文件名的后缀
+     * @return string
+     */
+    public function parseFilenmae(string $fileExt = ''): string
     {
-        # code...
+        // 有文件名就拼上mark  给默认文件名 当前时间戳+随机字符串
+        $fileName = $this->filename ? $this->filename : $this->uuid;
+        // 拼接文件名
+        $fileName = md5($this->path . $fileName);
+        // 后缀名用md5包起来
+        return $fileExt ? $fileName . '.' . $fileExt : $fileName;
+    }
+
+    /**
+     * 设置当前处理的文件名
+     *
+     * @param string $fileName
+     * @return self
+     */
+    public function setFilanme(string $fileName): self
+    {
+        $this->filename = $fileName;
+        return $this;
+    }
+
+    /**
+     * 当前处理的文件是否完成
+     *
+     * @return bool
+     */
+    public function isFinished(): bool
+    {
+        return $this->finished;
     }
 
     /**
@@ -62,18 +127,16 @@ class FileService
         return Utils::toPath(Utils::getClassName($className));
     }
 
-
     /**
-     * 填充路径
+     * 验证文件是否有有效.
+     * 
+     * 具体应让每个子类单独实现
      *
-     * @param string $path
-     * @return string
+     * @param UploadedFile $file
+     * @return bool
      */
-    public function padPath(string $prefix, string $path): string
+    public function verifFile(UploadedFile $file): bool
     {
-        if ($path[0] !== DIRECTORY_SEPARATOR) {
-            return $prefix . DIRECTORY_SEPARATOR . $path;
-        }
-        return $prefix . $path;
+        return true;
     }
 }

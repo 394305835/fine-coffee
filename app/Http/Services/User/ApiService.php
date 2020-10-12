@@ -5,6 +5,7 @@ namespace App\Http\Services\User;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\SMSRequest;
 use App\Lib\Constans;
+use App\Lib\File\FilePath;
 use App\Lib\File\FileService;
 use App\Lib\File\UserTheme;
 use App\Lib\RetJson;
@@ -59,32 +60,19 @@ class ApiService extends UserBaseService
     public function saveUserTheme(Request $request): RetInterface
     {
         // 1. 接受到文件
-        // 2. 将文件保存到服务器上
-        // 3. 得到该文件在服务器上的相对路径
-        // 4. 将该相对路径保存到用户的使用字段里面去
-        // 5. 返回提示信息或者文件相对路径
-        //1\
-        // TODO
-        // echo str_replace("", "index.php", "http://local.coffee.com:8081/index.php");
-        // exit;
-
         $file = $request->file('theme');
+        // 2. 验证文件是否有有效
         $fs = new UserTheme();
-        if (!$fs->isImage($file)) {
+        if (empty($file) || !$fs->verifFile($file)) {
             return RetJson::pure()->msg('请上传图片');
         }
-        //2,3
-        $path = $fs->up($file, USER_UID);
-        $prefix = URL::previous();
-        // TODO 路径需要替换,需要取得一个完整的域名
-        $prefix = str_replace('', 'index.php', $prefix);
 
-        // dd($prefix);
-
-        $path = $fs->padPath(URL::previous(), $path);
-        //4
-        User::singleton()->updateById(USER_UID, ['theme' => $path]);
-        //5
-        return RetJson::pure()->entity($path);
+        // 3. 将文件保存到服务器上
+        // 4. 得到该文件在服务器上的相对路径
+        $filePath = $fs->setFilanme(USER_UID)->upload($file);
+        // 5. 将该相对路径保存到用户的使用字段里面去
+        User::singleton()->updateById(USER_UID, ['theme' => $filePath->getPath()]);
+        // 6. 返回提示信息或者文件相对路径
+        return RetJson::pure()->entity($filePath->getUrl());
     }
 }

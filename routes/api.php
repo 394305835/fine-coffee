@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,7 +13,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
-
+Route::get('hello', function(){
+    dd(URL::previous());
+});
 // 通常
 Route::namespace('Sign')->middleware('cors')->group(function () {
     // Route::post('login', 'LoginController@login');

@@ -23,10 +23,11 @@ class UserTheme extends FileService
     /**
      * 判断文件是否是png 和jpg类型
      *
+     * @Override
      * @param UploadedFile $file
      * @return boolean
      */
-    public function isImage(UploadedFile $file): bool
+    public function verifFile(UploadedFile $file): bool
     {
         $rang = [Constans::MIME_IMAGE_JPEG, Constans::MIME_IMAGE_PNG];
         $type = $file->getClientMimeType();
