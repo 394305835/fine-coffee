@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\URL;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
-Route::get('hello', function(){
+
+Route::get('hello', function () {
     dd(URL::previous());
 });
 // 通常
@@ -24,7 +25,7 @@ Route::namespace('Sign')->middleware('cors')->group(function () {
 
 
 // 后台端
-Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function () {    
+Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function () {
     Route::post('/login', 'AuthAdminController@login');
     Route::post('/logout', 'AuthAdminController@logout');
 
@@ -35,6 +36,9 @@ Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function (
         //个人信息获取
         Route::get('/info', 'AuthAdminController@getUserInfo');
         Route::get('/menus', 'ApiController@getMenus');
+
+        // 用户-文件上传
+        Route::post('/upload', 'ApiController@upAdminFile');
 
         // 验证权限
         // 管理员管理
@@ -79,6 +83,11 @@ Route::namespace('User')->prefix('user')->middleware('cors')->group(function () 
     Route::post('/login', 'LoginController@login');
     Route::post('/logout', 'LoginController@logout');
     Route::get('/sms', 'ApiController@getSMS');
+
+    //用户商品查询(PS:不需要登录也可以查看商品)
+    Route::get('/query', 'GoodsController@getGoodsList');
+
+
 
     Route::middleware('auth.user.api')->group(function () {
         // 获取用户个人信息

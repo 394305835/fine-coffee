@@ -5,8 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SMSRequest;
 use App\Http\Services\User\ApiService;
-use Facade\FlareClient\Stacktrace\File;
-use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
@@ -15,6 +13,12 @@ class ApiController extends Controller
         return $this->api->reply($service->sendSMS($request));
     }
 
+    /**
+     * 用户修改头像
+     *
+     * @param ApiService $service
+     * @return void
+     */
     public function upLoadFile(ApiService $service)
     {
         return $this->api->reply($service->saveUserTheme($this->request));

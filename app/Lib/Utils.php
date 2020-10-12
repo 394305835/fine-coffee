@@ -42,6 +42,12 @@ class Utils
     {
         //   \\两个反斜杠表示转义的意思(我们这里写一个表示特殊的)
         $cs = explode('\\', $class_);
+        // array:4 [
+        //     0 => "App"
+        //     1 => "Lib"
+        //     2 => "File"
+        //     3 => "UserTheme"
+        //   ]
         //取数组的最后一个函数
         return end($cs);
     }

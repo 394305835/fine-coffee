@@ -37,4 +37,17 @@ class AuthAdmin extends MysqlRepository
     {
         return $this->model->where('id', $id)->first($this->field);
     }
+
+    /**
+     * 用主键更新
+     *
+     * @Override
+     * @param integer $id
+     * @param array $bean
+     * @return boolean
+     */
+    public function updateById(int $id, array $bean): bool
+    {
+        return $this->update([['id', '=', $id]], $bean);
+    }
 }

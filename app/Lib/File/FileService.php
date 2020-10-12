@@ -2,7 +2,6 @@
 
 namespace App\Lib\File;
 
-use App\Contracts\RestFul\Ret\RetInterface;
 use App\Lib\Utils;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -45,6 +44,7 @@ class FileService
     public function __construct(string $path = '')
     {
         $this->path = empty($path) ? 'public' : $path;
+        // "\user\theme"
         $this->uuid = Str::uuid();
         $this->finished = false;
     }
@@ -62,11 +62,12 @@ class FileService
         // 2. 保存文件
         // 3. 将文件所在相对路径返回回去
         //1 $path
-        //  2 
+        //  2 s
         // Storage::disk('local')->put('file.txt', 'Contents');
 
-        //获取文件名的后缀名,得到一个新的文件名
+        //获取文件名的后缀名,得到一个新的文件名 "7f5126d7ea95e6672be941363230427c.png"
         $fileName = $this->parseFilenmae($file->getClientOriginalExtension());
+        // Store the uploaded file on a filesystem disk with public visibility. PHP有这个方法直接调
         $realPath = $file->storePubliclyAs($this->path, $fileName);
 
         if ($realPath) {
@@ -87,7 +88,6 @@ class FileService
      */
     public function parseFilenmae(string $fileExt = ''): string
     {
-        // 有文件名就拼上mark  给默认文件名 当前时间戳+随机字符串
         $fileName = $this->filename ? $this->filename : $this->uuid;
         // 拼接文件名
         $fileName = md5($this->path . $fileName);
@@ -125,6 +125,8 @@ class FileService
     protected function changeClassNameToPath($className): string
     {
         return Utils::toPath(Utils::getClassName($className));
+        // Utils::getClassName($className)====== ' UserTheme'
+        // Utils::toPath(Utils::getClassName($className))==="\user\theme"
     }
 
     /**

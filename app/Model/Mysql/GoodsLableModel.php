@@ -4,7 +4,7 @@ namespace App\Model\Mysql;
 
 
 /**
- * 商品分类模型
+ * 商品分类模型表
  * 
 
  * @property string $id int
@@ -16,8 +16,7 @@ namespace App\Model\Mysql;
  * ```sql
  * CREATE TABLE `fc_goods_lable` (
  * `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
- * `title` varchar(255) DEFAULT NULL COMMENT '类名',
- * `sort` tinyint(11) DEFAULT NULL COMMENT '排序',
+ * `value` varchar(255) DEFAULT NULL COMMENT '类名',
  * `created_at` int(11) DEFAULT NULL,
  * `updated_at` int(11) DEFAULT NULL,
  * PRIMARY KEY (`id`)
@@ -30,9 +29,6 @@ class GoodsLableModel extends Model
 
     protected $attributes = [
         'id',
-        'title',
-        'sort',
-        'created_at',
-        'updated_at'
+        'value',
     ];
 }

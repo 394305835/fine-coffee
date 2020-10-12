@@ -28,7 +28,7 @@ class FilePath
         return $this->path;
     }
 
-    public function getPublicRealPath()
+    public function  getPublicRealPath()
     {
         return $this->concat('upload', $this->path);
     }

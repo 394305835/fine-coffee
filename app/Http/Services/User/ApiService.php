@@ -5,10 +5,12 @@ namespace App\Http\Services\User;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\SMSRequest;
 use App\Lib\Constans;
+use App\Lib\File\AdminTheme;
 use App\Lib\File\FilePath;
 use App\Lib\File\FileService;
 use App\Lib\File\UserTheme;
 use App\Lib\RetJson;
+use App\Repositories\AuthAdmin;
 use App\Repositories\SMS;
 use App\Repositories\User;
 use GuzzleHttp\Client;
@@ -71,7 +73,7 @@ class ApiService extends UserBaseService
         // 4. 得到该文件在服务器上的相对路径
         $filePath = $fs->setFilanme(USER_UID)->upload($file);
         // 5. 将该相对路径保存到用户的使用字段里面去
-        User::singleton()->updateById(USER_UID, ['theme' => $filePath->getPath()]);
+        AuthAdmin::singleton()->updateById(USER_UID, ['theme' => $filePath->getPath()]);
         // 6. 返回提示信息或者文件相对路径
         return RetJson::pure()->entity($filePath->getUrl());
     }

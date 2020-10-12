@@ -15,18 +15,18 @@ class YhService extends UserBaseService
 {
 
 
-    /**
-     * 获取个人用户列表
-     */
-    public function getUserInfo($request): RetInterface
-    {
-        // 2.2.2.由于获取用户接口是认证后的，可以直接知道用户的ID（一般用常量保存起来）
-        // USER_UID;
-        // 2.2.3 . 将用户ID交给仓库代查用户的信息
-        $user = User::singleton()->getUserInfoById(USER_UID);
-        // 然后返回给2.2
-        return RetJson::pure()->entity($user);
-    }
+    // /**
+    //  * 获取个人用户列表
+    //  */
+    // public function getUserInfo($request): RetInterface
+    // {
+    //     // 2.2.2.由于获取用户接口是认证后的，可以直接知道用户的ID（一般用常量保存起来）
+    //     // USER_UID;
+    //     // 2.2.3 . 将用户ID交给仓库代查用户的信息
+    //     $user = User::singleton()->getUserInfoById(USER_UID);
+    //     // 然后返回给2.2
+    //     return RetJson::pure()->entity($user);
+    // }
 
 
 
@@ -60,21 +60,21 @@ class YhService extends UserBaseService
          * 5. 返回提示信息
          * 
          */
-            $post = $request->only(array_keys($request->rules()));
-            if(empty($post)){
-                return RetJson::pure()->msg('修改成功');
-            }
-            $bean=[];
-            if(!empty($post['username'])){
-                $bean['username']=$post['username'];
-            }
-            if(!empty($post['theme'])){
-                $bean['theme']=$post['theme'];
-            }
-            if(!empty($post['sex'])){
-                $bean['sex']=$post['sex'];
-            }
-            User::singleton()->updateById(USER_UID,$bean);
+        $post = $request->only(array_keys($request->rules()));
+        if (empty($post)) {
             return RetJson::pure()->msg('修改成功');
         }
+        $bean = [];
+        if (!empty($post['username'])) {
+            $bean['username'] = $post['username'];
+        }
+        if (!empty($post['theme'])) {
+            $bean['theme'] = $post['theme'];
+        }
+        if (!empty($post['sex'])) {
+            $bean['sex'] = $post['sex'];
+        }
+        User::singleton()->updateById(USER_UID, $bean);
+        return RetJson::pure()->msg('修改成功');
+    }
 }

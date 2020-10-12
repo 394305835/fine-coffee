@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 /**
  * 提供用户头像文件相关服务
  */
-class UserTheme extends FileService
+class AdminTheme extends FileService
 {
     /**
      * Undocumented function
@@ -18,7 +18,6 @@ class UserTheme extends FileService
     public function __construct()
     {
         parent::__construct($this->changeClassNameToPath(__CLASS__));
-        // "\user\theme"
     }
 
     /**

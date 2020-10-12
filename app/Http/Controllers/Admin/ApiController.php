@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\Admin\ApiService;
 use App\Http\Services\Admin\AuthService\RuleService;
 use App\Repositories\AuthRule;
 use Illuminate\Http\Request;
@@ -19,5 +20,16 @@ class ApiController extends Controller
     public function getMenus(Request $request, RuleService $service)
     {
         return $this->api->reply($service->getSelect($request, AuthRule::TYPE_ROUTER));
+    }
+
+    /**
+     * 后台管理员修改头像
+     *
+     * @param ApiService $service
+     * @return void
+     */
+    public function upAdminFile(ApiService $service)
+    {
+        return $this->api->reply($service->saveAdminTheme($this->request));
     }
 }
