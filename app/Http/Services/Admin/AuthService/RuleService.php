@@ -31,13 +31,13 @@ class RuleService extends Auth
      * @param Request $request
      * @return RetInterface
      */
-    public function getSelect(Request $request, string $type = ''): RetInterface
+    public function getSelect(Request $request, string $type = '', array $fields = ['id', 'pid', 'title']): RetInterface
     {
         $where = [];
         if ($type == AuthRule::TYPE_API || $type == AuthRule::TYPE_ROUTER) {
             $where[] = ['type', '=', $type];
         }
-        $rules = $this->getUserRules(REQUEST_UID, $where, ['id', 'pid', 'title']);
+        $rules = $this->getUserRules(REQUEST_UID, $where, $fields);
         $rules = Tree::create($rules);
         return RetJson::pure()->list($rules);
     }
