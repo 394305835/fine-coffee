@@ -24,13 +24,14 @@ class AuthRuleSaveRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'id'        => 'integer|min:1', // 保存时需要传递ID
-            'pid'       => 'integer|min:0', // 该权限所属上级
-            'title'     => 'required', // 规则标题
-            'path'      => 'required', // 权限名称，就是 url
-            'icon'      => '', // 图标
-            'sort'     => 'required|integer', // 权重
-            'status'    => 'required|in:0,1', // 状态 1正常 0禁用
+            'id'     => 'integer|min:1', // 保存时需要传递ID
+            'pid'    => 'integer|min:0', // 该权限所属上级
+            'title'  => 'required', // 规则标题
+            'path'   => 'required', // 权限名称，就是 url
+            'icon'   => '', // 图标
+            'meta'   => '',
+            'sort'   => 'required|integer', // 权重
+            'status' => 'required|in:0,1', // 状态 1正常 0禁用
         ];
     }
 
