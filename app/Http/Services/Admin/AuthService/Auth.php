@@ -44,7 +44,7 @@ class Auth extends AuthBase
         $allGroup = $this->getAllGroup($field);
         $result = [];
         foreach ($userGroupIds as $_groupId) {
-            $subGroups = Tree::instance()->getChildren($allGroup, $_groupId, $self, $child);
+            $subGroups = Tree::factory()->getChildren($allGroup, $_groupId, $self, $child);
             // FIXME:生成树形结构需要修改后面，这里就是手动组合数据
             if ($child && !empty($subGroups[1])) {
                 $temp = array_shift($subGroups);

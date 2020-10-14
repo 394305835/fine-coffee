@@ -2,24 +2,17 @@
 
 namespace App\Lib;
 
-/**
- * 树库
- */
+use App\Contracts\Repository\BaseRepository;
+
 class Tree
 {
-    protected static $instance;
+    use BaseRepository;
 
-    /**
-     * 初始化
-     * @access public
-     * @return Tree
-     */
-    public static function instance()
+    protected $childKey;
+
+    public function __construct(string $childKey = 'child')
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
+        $this->childKey = $childKey;
     }
 
     /**
@@ -29,10 +22,10 @@ class Tree
      * @param integer $maxLevel
      * @return array
      */
-    public static function create(array $items, int $maxLevel = 10): array
+    public function create(array $items, int $maxLevel = 10): array
     {
         $minId = (int) max(min(array_column($items, 'pid')), 0);
-        return self::instance()->getChildren($items, $minId, true, true, 1, $maxLevel);
+        return $this->getChildren($items, $minId, true, true, 1, $maxLevel);
     }
 
     /**
@@ -57,7 +50,7 @@ class Tree
                 // !!! 只需要第一次时包含自己后面则不需要
                 $child = $this->getChildren($items, $item['id'], false, $toChild, $level + 1, $maxLevel);
                 if ($level < $maxLevel && $toChild) {
-                    $item['child'] = $child;
+                    $item[$this->childKey] = $child;
                 } else {
                     $result = array_merge($result, $child);
                 }

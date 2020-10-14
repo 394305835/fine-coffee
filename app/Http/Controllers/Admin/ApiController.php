@@ -19,7 +19,9 @@ class ApiController extends Controller
      */
     public function getMenus(Request $request, RuleService $service)
     {
-        return $this->api->reply($service->getSelect($request, AuthRule::TYPE_ROUTER));
+        $fields = ['id', 'pid', 'path', 'title', 'meta'];
+        // $fields = ['id', 'pid', 'path', 'component', 'redirect', 'name', 'meta'];
+        return $this->api->reply($service->getSelect($request, AuthRule::TYPE_ROUTER, $fields));
     }
 
     /**
