@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\Model;
 use App\Model\Mysql\SectionTypeModel;
+use Illuminate\Database\Eloquent\Collection;
 
 class SectionType extends MysqlRepository
 {
@@ -17,5 +18,18 @@ class SectionType extends MysqlRepository
     public function makeModel(): Model
     {
         return SectionTypeModel::singleton();
+    }
+
+    /**
+     * 根据商品属性选择ID来查询商品属性选择列表
+     *
+     * @param [type] $typeIds
+     * @return Collection
+     */
+    public function getTypeByIds($typeIds): Collection
+    {
+        return $this->model->join('goods_section', 'goods_section.id', 'goods_section_type.section_id')
+            ->select('goods_section_type.id', 'goods_section_type.section_id', 'goods_section_type.title', 'goods_section.title as name')
+            ->whereIn('goods_section_type.id', $typeIds)->get();
     }
 }

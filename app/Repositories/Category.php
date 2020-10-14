@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\CategoryModel;
 use App\Model\Mysql\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 class Category extends MysqlRepository
 {
@@ -17,5 +18,10 @@ class Category extends MysqlRepository
     public function makeModel(): Model
     {
         return CategoryModel::singleton();
+    }
+
+    public function getListSort(string $sort, string $sortBy = 'asc'): Collection
+    {
+        return $this->model->query()->where('id', '<', 4)->orderBy($sort, $sortBy)->get($this->field);
     }
 }
