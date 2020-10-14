@@ -35,6 +35,7 @@ class GoodsModel extends Model
 {
     protected $table = 'goods';
 
+
     protected $attributes = [
         'id',
         'lable_id',

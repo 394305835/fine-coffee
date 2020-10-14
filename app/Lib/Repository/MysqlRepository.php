@@ -57,9 +57,9 @@ abstract class MysqlRepository implements ReadRepository, DeleteRepository, Upda
      * 为当前仓库设置查询时的字段
      *
      * @param array $fields
-     * @return self
+     * @return static
      */
-    public function setField($fields = []): self
+    public function setField($fields = [])
     {
         if ($fields) {
             $_fields = [];

@@ -5,7 +5,7 @@ namespace App\Lib;
 class RetCode
 {
     /**
-                     * 响应成功
+     * 响应成功
      *
      * @message OK
      */

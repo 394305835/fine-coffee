@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\AuthGroupAccessModel;
 use App\Model\Mysql\Model;
-use PhpParser\Node\Stmt\Return_;
 
 class AuthAccess extends MysqlRepository
 {

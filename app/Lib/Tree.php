@@ -2,6 +2,9 @@
 
 namespace App\Lib;
 
+/**
+ * 树库
+ */
 class Tree
 {
     protected static $instance;

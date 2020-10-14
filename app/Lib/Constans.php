@@ -2,6 +2,9 @@
 
 namespace App\Lib;
 
+/**
+ * 该类提供了常量定义
+ */
 class Constans
 {
     const PAGE_LIMIT = 10;

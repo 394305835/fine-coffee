@@ -2,6 +2,9 @@
 
 namespace App\Lib;
 
+/**
+ * 工具类库
+ */
 class Utils
 {
 
