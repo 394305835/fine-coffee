@@ -85,7 +85,7 @@ Route::namespace('User')->prefix('user')->middleware('cors')->group(function () 
     Route::get('/sms', 'ApiController@getSMS');
 
     //用户商品查询(PS:不需要登录也可以查看商品)
-    Route::get('/query', 'GoodsController@getGoodsList');
+    Route::get('/query', 'GoodsController@ ');
 
 
 
@@ -112,6 +112,9 @@ Route::namespace('User')->prefix('user')->middleware('cors')->group(function () 
         Route::put('/address', 'UserAddressController@saveAddress');
         //配送地址 -删除
         Route::delete('/address', 'UserAddressController@deleteAddress');
+
+        //商品订单确认页
+        Route::get('/confirm_order', 'OrderController@index');
     });
 });
 

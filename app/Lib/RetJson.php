@@ -353,4 +353,9 @@ class RetJson implements JsonRetInterface
         }
         return $this->body;
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
 }
