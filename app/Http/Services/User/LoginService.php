@@ -63,6 +63,9 @@ class LoginService extends UserBaseService
                         $repeat = false;
                         $token = $this->token->create(['uid' => $uid]);
                     }
+                    // 清除短信验证码
+                    SMS::singleton()->remove($phone);
+                    
                     // 刷新 Token
                     $repeat && $this->token->refresh($token);
                     return RetJson::pure()->setBody(compact('token', 'type', 'repeat', 'key', 'void'));

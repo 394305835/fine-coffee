@@ -16,7 +16,7 @@ use App\Repositories\Token\UserToken;
  * openssl rsa -in pri_key.pem -pubout -out pub_key.pem
  * ```
  */
-class BussienJwt extends Jwt
+class SellerJwt extends Jwt
 {
     public function __construct()
     {

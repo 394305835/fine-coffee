@@ -20,7 +20,8 @@ class RetCode
     const AUTH_USER_EXISTS = 40104;
     const AUTH_USER_NOT_EXIST = 40105;
     const AUTH_USER_WRONG_PASSWORD = 40106;
-
+    const AUTH_RULE_INVALID = 40107;
+    
     const ENTITY_PUT_FAIL = 41001;
     const ENTITY_NOTMATCH = 41002;
     const ENTITY_DICT_EXISTS = 41003;
@@ -61,6 +62,7 @@ class RetCode
             40104 => 'auth.user.exists',
             40105 => 'auth.user.notexist',
             40106 => 'auth.user.wrong_password',
+            40107 => 'auth.rule.invalid',
 
             41001 => 'entity.put.fail',
             41002 => 'entity.notmatch',

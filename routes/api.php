@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthAdminController;
+use App\Http\Controllers\User\LoginController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
@@ -17,30 +19,34 @@ use Illuminate\Support\Facades\URL;
 Route::get('hello', function () {
     dd(URL::previous());
 });
-// 通常
-Route::namespace('Sign')->middleware('cors')->group(function () {
-    // Route::post('login', 'LoginController@login');
-    // Route::post('logout', 'LoginController@logout');
+
+// 普通登录跨域接口
+Route::middleware('cors')->group(function () {
+    // 后台登录及登出
+    Route::post('/admin/login', [AuthAdminController::class, 'login']);
+    Route::post('/admin/logout', [AuthAdminController::class, 'logout']);
+
+    //用户端登录与登出
+    Route::post('/user/login', [LoginController::class, 'login']);
+    Route::post('/user/logout', [LoginController::class, 'logout']);
+    // 短信验证码
+    Route::get('/user/sms', [\App\Http\Controllers\User\ApiController::class, 'getSMS']);
+
+    // 商家端登录与登出
+    // Route::post('/user/login', 'LoginController@login');
+    // Route::post('/user/logout', 'LoginController@logout');
 });
 
-
 // 后台端
-Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function () {
-    Route::post('/login', 'AuthAdminController@login');
-    Route::post('/logout', 'AuthAdminController@logout');
-
+Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'])->group(function () {
+    //个人信息获取
+    Route::get('/menus', 'ApiController@getMenus');
+    // 用户-文件上传
+    Route::post('/upload', 'ApiController@upAdminFile');
 
     // 后台权限
-    Route::middleware('auth.api')->group(function () {
-        // 后台 api
-        //个人信息获取
+    Route::middleware('auth.admin.rule')->group(function () {
         Route::get('/info', 'AuthAdminController@getUserInfo');
-        Route::get('/menus', 'ApiController@getMenus');
-
-        // 用户-文件上传
-        Route::post('/upload', 'ApiController@upAdminFile');
-
-        // 验证权限
         // 管理员管理
         // 管理员-列表
         Route::get('/admins', 'AuthAdminController@index');
@@ -78,47 +84,35 @@ Route::namespace('Admin')->prefix('admin')->middleware('cors')->group(function (
 });
 
 // 用户端
-Route::namespace('User')->prefix('user')->middleware('cors')->group(function () {
-    //登录
-    Route::post('/login', 'LoginController@login');
-    Route::post('/logout', 'LoginController@logout');
-    Route::get('/sms', 'ApiController@getSMS');
+Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])->group(function () {
 
-    //用户商品查询(PS:不需要登录也可以查看商品)
-    Route::get('/query', 'GoodsController@ ');
+    // //用户商品查询(PS:不需要登录也可以查看商品)
+    // Route::get('/query', 'GoodsController@ ');
+    // 获取用户个人信息
+    Route::get('/info', 'UserController@getUserInfo');
 
+    // // 用户-列表
+    // Route::get('/list', 'UserController@index');
+    // 用户-修改
+    Route::put('/user', 'UserController@saveUser');
+    // 用户-头像上传
+    Route::post('/upload', 'ApiController@upLoadFile');
 
+    //配送地址管理增删改查
+    //配送地址 -列表
+    Route::get('/address', 'UserAddressController@index');
+    //配送地址 -新增
+    Route::post('/address', 'UserAddressController@addAddress');
+    //配送地址 -修改
+    Route::put('/address', 'UserAddressController@saveAddress');
+    //配送地址 -删除
+    Route::delete('/address', 'UserAddressController@deleteAddress');
 
-    Route::middleware('auth.user.api')->group(function () {
-        // 获取用户个人信息
-        Route::get('/info', 'UserController@getUserInfo');
-
-        // // 用户-列表
-        // Route::get('/list', 'UserController@index');
-        // 用户-修改
-        Route::put('/user', 'UserController@saveUser');
-        // 用户-文件上传
-        /**
-         * 
-         */
-        Route::post('/upload', 'ApiController@upLoadFile');
-
-        //配送地址管理增删改查
-        //配送地址 -列表
-        Route::get('/address', 'UserAddressController@index');
-        //配送地址 -新增
-        Route::post('/address', 'UserAddressController@addAddress');
-        //配送地址 -修改
-        Route::put('/address', 'UserAddressController@saveAddress');
-        //配送地址 -删除
-        Route::delete('/address', 'UserAddressController@deleteAddress');
-
-        //商品订单确认页
-        Route::get('/confirm_order', 'OrderController@index');
-    });
+    //商品订单确认页
+    Route::get('/confirm_order', 'OrderController@index');
 });
 
 
 // 商家端
-Route::namespace('Business')->prefix('business')->middleware('cors')->group(function () {
+Route::namespace('Seller')->prefix('seller')->middleware('cors')->group(function () {
 });
