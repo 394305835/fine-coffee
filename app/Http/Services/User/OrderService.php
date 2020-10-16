@@ -2,12 +2,17 @@
 
 namespace App\Http\Services\User;
 
-use App\Repositories\Goods;
+use App\Contracts\RestFul\Ret\RetInterface;
+use App\Http\Requests\User\CreateOrderRequest;
+use App\Http\Services\User\Goods\Section;
+use App\Jobs\CreateOrderPodcast;
+use App\Lib\RetJson;
+use App\Repositories\GoodsAccess;
+use App\Repositories\OrderToken;
 use App\Repositories\SectionType;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
- * 该类提供了订单详情确认页面查询功能
+ * 生成一条订单详情信息
  */
 class OrderService extends UserBaseService
 {
@@ -17,13 +22,49 @@ class OrderService extends UserBaseService
      * @param [type] $request
      * @return void
      */
-    public function getOrderDetails($request)
+    public function getOrderDetails($request): RetInterface
     {
-        //第一步拿到信息
 
-        //需要的数据，商品ID 查询商品图片 属性选择 数量  价格
-        $goodsId = $request->input('id');
-        //用ID拿到商商品表中的信息
-        $goodsList = Goods::singleton()->getGoodsByIds([$goodsId]);
+        $goodsId = $request->input('gid');
+        $typeIds = $request->input('type_id');
+        //用ID拿到商商品对应的信息，商品属性选择选中的选项
+        $goodsList = SectionType::singleton()->getGoodsByIds($typeIds);
+        return RetJson::pure()->entity($goodsList);
+    }
+
+    /**
+     * 生成一个订单
+     *
+     * @param CreateOrderRequest $request
+     * @return RetInterface
+     */
+    public function createOrder(CreateOrderRequest $request): RetInterface
+    {
+        // 1--拿到要生成订单的TOKEN是否有效
+        // 2--验证type_id是否有效
+        // 3--生成订单相关的信息--交给上面的方法做
+        // 4--创建一个生成订单的队列任务
+        // 5--返回该订单相关信息
+
+        // 1--
+        $gid = $request->input('gid');
+        $typeIds = $request->input('type_id');
+        $goodsId = OrderToken::singleton()->getToken($gid);
+        if (!$goodsId) {
+            return RetJson::pure()->msg('请刷新');
+        }
+        // 2--
+        $section = new Section();
+        if (!$section->hasSectionType($goodsId, $typeIds)) {
+            return RetJson::pure()->msg('参数无效');
+        }
+        // 3--生成订单相关的信息
+        $orderInfo = $this->getOrderDetails($request);
+
+        //4--分发一条任务 把参数传给它，然后入队列
+        CreateOrderPodcast::dispatch($orderInfo);
+
+        //5-
+        return RetJson::pure()->entity($orderInfo);
     }
 }

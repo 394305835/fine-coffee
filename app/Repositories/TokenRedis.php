@@ -11,7 +11,7 @@ use App\Lib\Repository\RedisRepository;
 class TokenRedis extends RedisRepository implements RedisTokenInterface
 {
 
-    protected $key = 'codebook:jwt:user';
+    protected $key = 'finecoffee:jwt:user';
 
     /**
      * 获取token 在 redis 中的 key
@@ -36,7 +36,7 @@ class TokenRedis extends RedisRepository implements RedisTokenInterface
      */
     public function getToken(int $uid): ?string
     {
-        return $this->reids->get($this->getTokenKey($uid));
+        return $this->redis->get($this->getTokenKey($uid));
     }
 
     /**
@@ -50,7 +50,7 @@ class TokenRedis extends RedisRepository implements RedisTokenInterface
      */
     public function create(int $uid, string $token, int $exp = 0): bool
     {
-        return !!$this->reids->setex($this->getTokenKey($uid), $exp, $token);
+        return !!$this->redis->setex($this->getTokenKey($uid), $exp, $token);
     }
 
     /**
@@ -62,6 +62,6 @@ class TokenRedis extends RedisRepository implements RedisTokenInterface
      */
     public function remove(int $uid): bool
     {
-        return $this->reids->del($this->getTokenKey($uid));
+        return $this->redis->del($this->getTokenKey($uid));
     }
 }

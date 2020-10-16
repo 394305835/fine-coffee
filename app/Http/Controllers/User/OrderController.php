@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\CreateOrderRequest;
 use App\Http\Services\User\OrderService;
 use Illuminate\Http\Request;
 
@@ -19,5 +20,10 @@ class OrderController extends Controller
     public function index(Request $request, OrderService $service)
     {
         return $this->api->reply($service->getOrderDetails($request));
+    }
+
+    public function createOrder(CreateOrderRequest $request, OrderService $service)
+    {
+        return $this->api->reply($service->createOrder($request));
     }
 }

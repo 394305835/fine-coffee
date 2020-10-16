@@ -113,8 +113,10 @@ Route::namespace('User')->prefix('user')->middleware('cors')->group(function () 
         //配送地址 -删除
         Route::delete('/address', 'UserAddressController@deleteAddress');
 
-        //商品订单确认页
+        //生成一条订单详情页
         Route::get('/confirm_order', 'OrderController@index');
+        //商品订单--立即购买
+        Route::post('/do_order', 'OrderController@createOrder');
     });
 });
 

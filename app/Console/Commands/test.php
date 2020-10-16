@@ -6,6 +6,7 @@ use App\Jobs\CreateOrderPodcast;
 use App\Lib\RetJson;
 use App\Lib\Utils;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
 class test extends Command
 {
@@ -40,8 +41,10 @@ class test extends Command
      */
     public function handle()
     {
-
-        CreateOrderPodcast::dispatch(random_int(10, 100));
+        while (true) {
+            CreateOrderPodcast::dispatch('abcdefghijklmnopqrstuvwxyz');
+            sleep(1);
+        };
 
         //对象--
         //这是一个创建对象的手段。

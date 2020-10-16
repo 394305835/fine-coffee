@@ -30,11 +30,11 @@ abstract class RedisRepository
      * @see \Illuminate\Redis\RedisServiceProvider
      * @var \Predis\Client
      */
-    protected $reids;
+    protected $redis;
 
     public function __construct()
     {
-        $this->reids = app('redis');
+        $this->redis = app('redis');
     }
 
     public function getKey(string $mark = ''): string
