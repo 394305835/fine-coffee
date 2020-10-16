@@ -32,4 +32,10 @@ class GoodsAccess extends MysqlRepository
             ->whereIn('category_id', $categoryIds)
             ->get(['goods_access.category_id', 'goods.id', 'goods.theme', 'goods.name', 'goods.subtitle', 'goods.price', 'goods.is_sale', 'goods_access.section_id', 'goods_access.type_id']);
     }
+
+
+    public function getAccessByGoodsId(int $goodsId): ?GoodsAccessModel
+    {
+        return $this->findBy('goods_id', $goodsId);
+    }
 }

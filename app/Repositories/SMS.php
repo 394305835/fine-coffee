@@ -10,7 +10,7 @@ use App\Lib\Repository\RedisRepository;
  */
 class SMS extends RedisRepository
 {
-    protected $key = 'codebook:sms:user';
+    protected $key = 'finecoffee:sms:user';
 
     /**
      * 获取一个 短信验证码
@@ -21,7 +21,7 @@ class SMS extends RedisRepository
      */
     public function getSMS(string $phone): ?string
     {
-        return $this->reids->get($this->getKey($phone));
+        return $this->redis->get($this->getKey($phone));
     }
 
     /**
@@ -35,7 +35,7 @@ class SMS extends RedisRepository
      */
     public function create(string $phone, string $code, int $exp = 0): bool
     {
-        return !!$this->reids->setex($this->getKey($phone), $exp, $code);
+        return !!$this->redis->setex($this->getKey($phone), $exp, $code);
     }
 
     /**
@@ -47,6 +47,6 @@ class SMS extends RedisRepository
      */
     public function remove(string $phone): bool
     {
-        return $this->reids->del($this->getKey($phone));
+        return $this->redis->del($this->getKey($phone));
     }
 }

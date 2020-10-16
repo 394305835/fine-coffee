@@ -39,6 +39,8 @@ class test1 extends Command
      */
     public function handle()
     {
+        $a = '{"uuid":"0f4667b3-a6be-4b5b-86f9-89539011c5d9","displayName":"App\\Jobs\\CreateOrderPodcast","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"delay":null,"timeout":null,"timeoutAt":null,"data":{"commandName":"App\\Jobs\\CreateOrderPodcast","command":"O:27:\"App\\Jobs\\CreateOrderPodcast\":9:{s:8:\"\u0000*\u0000order\";i:10;s:3:\"job\";N;s:10:\"connection\";N;s:5:\"queue\";N;s:15:\"chainConnection\";N;s:10:\"chainQueue\";N;s:5:\"delay\";N;s:10:\"middleware\";a:0:{}s:7:\"chained\";a:0:{}}"},"id":"J07lrDtZE3LX72axt1CTkWSEhGxzGDKo","attempts":0}';
+        dd(unserialize($a));
         // $ret = new RetJson();
         // $ret->name = $ret;
         // $ret->age = 20;

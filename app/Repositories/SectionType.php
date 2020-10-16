@@ -32,4 +32,18 @@ class SectionType extends MysqlRepository
             ->select('goods_section_type.id', 'goods_section_type.section_id', 'goods_section_type.title', 'goods_section.title as name')
             ->whereIn('goods_section_type.id', $typeIds)->get();
     }
+
+    /**
+     * 用商品ID来获取商品对应和商品属性选择
+     *
+     * @param [type] $goodsId
+     * @return void
+     */
+    public function getGoodsByIds($typeIds)
+    {
+        return $this->model->join('goods', 'goods.id', 'goods_access.goods_id')
+            ->select('goods.theme', 'goods.name', 'goods.price', '')
+            ->whereIn('type_id', $typeIds)
+            ->get();
+    }
 }
