@@ -3,14 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Contracts\RestFul\RESTFulAPI;
-use App\Contracts\Service\LogServiceInterface;
-use App\Contracts\Token\TokenInterface;
 use App\Http\Services\Admin\AuthService\Auth;
-use App\Lib\Jwt\AdminJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 /**
  * 后台访问接口鉴权
  */
@@ -53,7 +49,7 @@ class AuthAdminRule
         if (!$this->auth->hasRuleByPath(REQUEST_UID, $path)) {
             return $this->api->reply(RetJson::make(401)->setRetCode(RetCode::AUTH_RULE_INVALID)->error());
         }
-        
+
         return $next($request);
     }
 }
