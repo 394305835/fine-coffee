@@ -348,8 +348,11 @@ class RetJson implements JsonRetInterface
      */
     public function __invoke()
     {
-        if (isset($this->body['code'])) {
+        if (is_array($this->body) && isset($this->body['code'])) {
             $this->body['code'] = $this->retCode;
+        }
+        if (is_object($this->body) && isset($this->body->code)) {
+            $this->body->code = $this->retCode;
         }
         return $this->body;
     }

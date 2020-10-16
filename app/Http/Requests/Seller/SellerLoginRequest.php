@@ -1,15 +1,15 @@
 <?php
 
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Seller;
 
 use App\Http\Requests\BaseRequest;
 
 /**
- * 权限管理-管理员日志-获取
+ * 
  * @author qrj
  */
-class UserLoginRequest extends BaseRequest
+class SellerLoginRequest extends BaseRequest
 {
 
     /**
@@ -26,8 +26,8 @@ class UserLoginRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'phone' => 'required',
-            'code' => 'required'
+            'username' => 'required',
+            'password' => 'required'
         ];
     }
 

@@ -36,9 +36,9 @@ class AdminJwt extends Jwt
     public function check(string $token): bool
     {
         try {
-            $this->payload = $this->parse($token);
+            $payload = $this->parse($token);
             // 与 redis 中比较
-            $rediToken = $this->repo->getToken((int) $this->payload->uid);
+            $rediToken = $this->repo->getToken((int) $payload->uid);
             return empty($rediToken) ? false : $token === $rediToken;
         } catch (\Throwable $th) {
             return false;
@@ -56,9 +56,10 @@ class AdminJwt extends Jwt
     }
     public function invalid(string $token): bool
     {
-        if (!$this->payload->uid) {
+        $payload = $this->parse($token);
+        if (!$payload->uid) {
             return false;
         }
-        return $this->repo->remove($this->payload->uid);
+        return $this->repo->remove($payload->uid);
     }
 }

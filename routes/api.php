@@ -33,8 +33,8 @@ Route::middleware('cors')->group(function () {
     Route::get('/user/sms', [\App\Http\Controllers\User\ApiController::class, 'getSMS']);
 
     // 商家端登录与登出
-    // Route::post('/user/login', 'LoginController@login');
-    // Route::post('/user/logout', 'LoginController@logout');
+    Route::post('/seller/login', [\App\Http\Controllers\Seller\LoginController::class, 'login']);
+    Route::post('/seller/logout', [\App\Http\Controllers\Seller\LoginController::class, 'logout']);
 });
 
 // 后台端

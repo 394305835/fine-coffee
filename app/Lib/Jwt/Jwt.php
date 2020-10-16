@@ -3,8 +3,8 @@
 namespace App\Lib\Jwt;
 
 use App\Contracts\Repository\BaseRepository;
+use App\Contracts\Token\Payload;
 use App\Contracts\Token\TokenInterface;
-use App\Lib\Constans;
 
 /**
  * JWT 认证
@@ -50,7 +50,7 @@ EOF;
     /**
      * Undocumented variable
      *
-     * @var object
+     * @var Payload
      */
     protected $payload;
 
@@ -64,16 +64,7 @@ EOF;
 
     public function __construct()
     {
-        $iat = time();
-        $this->payload = (object) [
-            "iss" => "codebook.org", //签发者 可以为空
-            "aud" => "codebook.com", //面象的用户，可以为空
-            "iat" => $iat, //签发时间
-            "nbf" => $iat, //在什么时候jwt开始生效
-            "exp" => $iat + Constans::TOKEN_EXP_TIME, //token 过期时间
-            "uid" => 0,
-            "idn" => 0,
-        ];
+        $this->payload = new Payload();
     }
 
     /**
@@ -99,18 +90,23 @@ EOF;
      * @return ->exp //token 过期时间
      * @return ->id //记录的id的信息，这里是自已添加上去的，如果有其它信息，可以再添加数组的键值对
      */
-    protected function parse(string $token = ''): object
+    protected function parse(string $token = ''): Payload
     {
-        if (!$token) {
-            return $this->payload ? $this->payload : (object) [];
+        if ($this->payload->uid && $this->payload->uid > 1) {
+            return $this->payload;
         }
-        return static::decode($token, $this->publicKey, [$this->alg]);
+        $payload = static::decode($token, $this->publicKey, [$this->alg]);
+        return $this->payload = Payload::warp($payload);
     }
 
-    public function getPayload(string $token = ''): \stdClass
+    public function getPayload(string $token = ''): Payload
     {
-        return $this->payload;
+        if (!$token) {
+            return $this->payload;
+        }
+        return $this->parse($token);
     }
+
     abstract public function create(array $payload): string;
     abstract public function check(string $token): bool;
     abstract public function refresh(string $token): bool;

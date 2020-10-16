@@ -3,8 +3,7 @@
 namespace App\Lib\Jwt;
 
 use App\Lib\Constans;
-use App\Repositories\Token\BussienToken;
-use App\Repositories\Token\UserToken;
+use App\Repositories\Token\SellerToken;
 
 /**
  * JWT 认证
@@ -18,10 +17,23 @@ use App\Repositories\Token\UserToken;
  */
 class SellerJwt extends Jwt
 {
+
+    /**
+     * Undocumented variable
+     *
+     * @var SellerToken
+     */
+    protected $repo;
+
     public function __construct()
     {
         parent::__construct();
-        $this->repo = BussienToken::singleton();
+        $this->repo = SellerToken::singleton();
+    }
+
+    public function getRepo(): SellerToken
+    {
+        return $this->repo;
     }
 
     public function create(array $payload): string
@@ -29,7 +41,7 @@ class SellerJwt extends Jwt
         if (empty($uid = (int) $payload['uid']) || !is_numeric($uid)) {
             return '';
         }
-        $token = $this->make($uid, UserToken::IDN);
+        $token = $this->make($uid, $this->repo::IDN);
         // 有效时间 = 过期时间 - 当前时间
         return $this->repo->create($uid, $token, $this->payload->exp - time()) ? $token : '';
     }
