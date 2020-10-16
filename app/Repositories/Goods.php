@@ -99,4 +99,9 @@ class Goods extends MysqlRepository
     {
         return [];
     }
+
+    public function getGoodsById(int $goodsId): ?GoodsModel
+    {
+        return $this->findBy('id', $goodsId);
+    }
 }

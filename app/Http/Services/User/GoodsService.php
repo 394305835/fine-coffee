@@ -3,9 +3,11 @@
 namespace App\Http\Services\User;
 
 use App\Contracts\RestFul\Ret\RetInterface;
+use App\Http\Requests\IDRequest;
 use App\Lib\RetJson;
 use App\Repositories\Category;
 use App\Repositories\GoodsAccess;
+use App\Repositories\OrderToken;
 use App\Repositories\SectionType;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -95,6 +97,24 @@ class GoodsService
             $categoryList[$_goods['category_id']]['goods'][] = $_goods;
         }
         return RetJson::pure()->list(array_values($categoryList));
+    }
+
+    /**
+     * 获取商品信息
+     *
+     * @param IDRequest $request
+     * @return RetInterface
+     */
+    public function getGoodsInfo(IDRequest $request): RetInterface
+    {
+        $goodsId = $request->input('id');
+        //1--为当次页面刷新得到一个唯一的md5下单值
+        $key = md5(time() . USER_UID . $goodsId);
+        OrderToken::singleton()->create($key, $goodsId);
+        return RetJson::pure()->entity([
+            'id' => $goodsId,
+            'sign' => $key,
+        ]);
     }
 }
 

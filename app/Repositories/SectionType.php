@@ -39,11 +39,8 @@ class SectionType extends MysqlRepository
      * @param [type] $goodsId
      * @return void
      */
-    public function getGoodsByIds($typeIds)
+    public function getGoodsByIds($typeIds): Collection
     {
-        return $this->model->join('goods', 'goods.id', 'goods_access.goods_id')
-            ->select('goods.theme', 'goods.name', 'goods.price', '')
-            ->whereIn('type_id', $typeIds)
-            ->get();
+        return $this->model->whereIn('id', $typeIds)->get($this->field);
     }
 }

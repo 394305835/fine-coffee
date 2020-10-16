@@ -84,74 +84,36 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
 });
 
 // 用户端
-Route::namespace('User')->prefix('user')->middleware('cors')->group(function () {
-    //登录
-    Route::post('/login', 'LoginController@login');
-    Route::post('/logout', 'LoginController@logout');
-    Route::get('/sms', 'ApiController@getSMS');
 
-    //用户商品查询(PS:不需要登录也可以查看商品)
-    Route::get('/query', 'GoodsController@ ');
+Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])->group(function () {
+
+    // //用户商品查询(PS:不需要登录也可以查看商品)
+    // Route::get('/query', 'GoodsController@ ');
+    // 获取用户个人信息
+    Route::get('/info', 'UserController@getUserInfo');
+
+    // // 用户-列表
+    // Route::get('/list', 'UserController@index');
+    // 用户-修改
+    Route::put('/user', 'UserController@saveUser');
+    // 用户-头像上传
+    Route::post('/upload', 'ApiController@upLoadFile');
+
+    //配送地址管理增删改查
+    //配送地址 -列表
+    Route::get('/address', 'UserAddressController@index');
+    //配送地址 -新增
+    Route::post('/address', 'UserAddressController@addAddress');
+    //配送地址 -修改
+    Route::put('/address', 'UserAddressController@saveAddress');
+    //配送地址 -删除
+    Route::delete('/address', 'UserAddressController@deleteAddress');
 
 
-
-    Route::middleware('auth.user.api')->group(function () {
-        // 获取用户个人信息
-        Route::get('/info', 'UserController@getUserInfo');
-
-        // // 用户-列表
-        // Route::get('/list', 'UserController@index');
-        // 用户-修改
-        Route::put('/user', 'UserController@saveUser');
-        // 用户-文件上传
-        /**
-         * 
-         */
-        Route::post('/upload', 'ApiController@upLoadFile');
-
-        //配送地址管理增删改查
-        //配送地址 -列表
-        Route::get('/address', 'UserAddressController@index');
-        //配送地址 -新增
-        Route::post('/address', 'UserAddressController@addAddress');
-        //配送地址 -修改
-        Route::put('/address', 'UserAddressController@saveAddress');
-        //配送地址 -删除
-        Route::delete('/address', 'UserAddressController@deleteAddress');
-
-        //生成一条订单详情页
-        Route::get('/confirm_order', 'OrderController@index');
-        //商品订单--立即购买
-        Route::post('/do_order', 'OrderController@createOrder');
-    });
-
-    Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])->group(function () {
-
-        // //用户商品查询(PS:不需要登录也可以查看商品)
-        // Route::get('/query', 'GoodsController@ ');
-        // 获取用户个人信息
-        Route::get('/info', 'UserController@getUserInfo');
-
-        // // 用户-列表
-        // Route::get('/list', 'UserController@index');
-        // 用户-修改
-        Route::put('/user', 'UserController@saveUser');
-        // 用户-头像上传
-        Route::post('/upload', 'ApiController@upLoadFile');
-
-        //配送地址管理增删改查
-        //配送地址 -列表
-        Route::get('/address', 'UserAddressController@index');
-        //配送地址 -新增
-        Route::post('/address', 'UserAddressController@addAddress');
-        //配送地址 -修改
-        Route::put('/address', 'UserAddressController@saveAddress');
-        //配送地址 -删除
-        Route::delete('/address', 'UserAddressController@deleteAddress');
-
-        //商品订单确认页
-        Route::get('/confirm_order', 'OrderController@index');
-    });
+    //商品订单--立即购买
+    Route::post('/do_order', 'OrderController@createOrder');
+    //获取商品详情信息
+    Route::get('/goods', 'GoodsController@getGoodsInfo');
 });
 
 // 商家端

@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Contracts\Repositories\RedisTokenInterface;
 use App\Lib\Repository\RedisRepository;
 
 /**
