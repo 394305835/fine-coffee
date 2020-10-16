@@ -7,14 +7,7 @@ use App\Model\Mysql\AuthGroupModel;
 use App\Model\Mysql\AuthRuleModel;
 use App\Repositories\AuthGroup;
 
-/**
- * 该类提供后台鉴权相关服务.
- * 1. 用户
- * 2. 角色
- * 3. 访问权限 
- */
-
-class AuthBase
+trait Check
 {
     /**
      * 检查权限,检查两个集合中是否存在包含或相同
@@ -50,7 +43,18 @@ class AuthBase
 
         return false;
     }
+}
 
+/**
+ * 该类提供后台鉴权相关服务.
+ * 1. 用户
+ * 2. 角色
+ * 3. 访问权限 
+ */
+class AuthBase 
+{
+    use Check;
+    
     /**
      * 获取用户对应的组信息,可以接受多个用户的组信息
      * 提供UID，找到关系表ACCESS，找到UID对应的Group_id，查询group表，拿到信息。OVER！
@@ -124,7 +128,7 @@ class AuthBase
     {
         $rulesId = $this->getRuleIdsByGroup($groupIds);
         if (empty($field)) {
-            $field = ['id', 'pid', 'type', 'path', 'title', 'icon'];
+            $field = ['id', 'pid', 'type', 'path', 'title', 'meta', 'status', 'sort'];
         }
 
         $rules = AuthRuleModel::select($field);

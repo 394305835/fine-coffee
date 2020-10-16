@@ -5,12 +5,12 @@ namespace App\Http\Middleware;
 use App\Contracts\RestFul\RESTFulAPI;
 use App\Contracts\Service\LogServiceInterface;
 use App\Contracts\Token\TokenInterface;
-use App\Lib\Jwt\AdminJwt;
+use App\Lib\Jwt\SellerJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use Illuminate\Http\Request;
 
-class AuthApi
+class AuthSellerApi
 {
     /**
      * 日志服务
@@ -35,7 +35,7 @@ class AuthApi
 
     public function __construct(RESTFulAPI $api)
     {
-        $this->token = AdminJwt::singleton();
+        $this->token = SellerJwt::singleton();
         $this->api = $api;
     }
 
@@ -67,9 +67,9 @@ class AuthApi
         $this->token->refresh($token);
 
         /**
-         * 用户身份ID
+         * 商家身份ID
          */
-        define('REQUEST_UID', $this->token->getPayload()->uid);
+        define('AUTH_SELLER_UID', $this->token->getPayload()->uid);
 
         // $this->log->write();
 

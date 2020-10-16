@@ -4,6 +4,7 @@ namespace App\Http\Services\Admin\AuthService;
 
 use App\Lib\Tree;
 use App\Repositories\AuthAccess;
+use App\Repositories\AuthRule;
 
 /**
  * 
@@ -19,7 +20,7 @@ class Auth extends AuthBase
      */
     public function getUserGroup($uid)
     {
-        return   $this->getGroups([$uid]);
+        return $this->getGroups([$uid]);
     }
 
     /**
@@ -130,8 +131,11 @@ class Auth extends AuthBase
 
     /**
      * 判断用户是否有某些权限
+     * 
+     * @param int $uid
+     * @param array<int> $subRulesIds 规则ID
      */
-    public function hasRules($uid, $subRulesIds)
+    public function hasRules(int $uid, array $subRulesIds): bool
     {
         $rulesIds = $this->getUserRuleIds($uid);
 
@@ -146,5 +150,20 @@ class Auth extends AuthBase
     {
         $ruleIds = $this->getUserRuleIds($uid);
         return in_array('*', $ruleIds);
+    }
+
+    /**
+     * 验证用户是否有某个访问地址的权限
+     *
+     * @param integer $uid
+     * @param string $path
+     * @return boolean
+     */
+    public function hasRuleByPath(int $uid, string $path): bool
+    {
+        $where = [['type', '=', AuthRule::TYPE_API]];
+        $rules = $this->getUserRules($uid, $where);
+        $rules = array_column($rules, null, 'path');
+        return !empty($rules[$path]);
     }
 }
