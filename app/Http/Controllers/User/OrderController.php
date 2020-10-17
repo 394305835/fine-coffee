@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\CreateOrderRequest;
+use App\Http\Requests\User\OrderComfirmRequest;
+use App\Http\Requests\User\OrderPayRequest;
 use App\Http\Services\User\OrderService;
 use Illuminate\Http\Request;
 
@@ -22,8 +23,12 @@ class OrderController extends Controller
         return $this->api->reply($service->getOrderDetails($request));
     }
 
-    public function createOrder(CreateOrderRequest $request, OrderService $service)
+    public function comfirmOrder(OrderComfirmRequest $request, OrderService $service)
     {
-        return $this->api->reply($service->createOrder($request));
+        return $this->api->reply($service->comfirmOrder($request));
+    }
+    public function payOrder(OrderPayRequest $request, OrderService $service)
+    {
+        return $this->api->reply($service->payOrder($request));
     }
 }

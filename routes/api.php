@@ -110,10 +110,13 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
     Route::delete('/address', 'UserAddressController@deleteAddress');
 
 
-    //商品订单--立即购买
-    Route::post('/do_order', 'OrderController@createOrder');
-    //获取商品详情信息
+    //获取商品详情信息-- 商品详情页面
     Route::get('/goods', 'GoodsController@getGoodsInfo');
+
+    // 商品订单--立即购买-- 订单确认页面
+    Route::post('/comfirm_order', 'OrderController@comfirmOrder');
+    // 商品订单--立即支付--选择支付方式后付钱
+    Route::post('/pay_order', 'OrderController@payOrder');
 });
 
 // 商家端

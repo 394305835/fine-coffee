@@ -4,7 +4,7 @@ namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseRequest;
 
-class CreateOrderRequest extends BaseRequest
+class OrderComfirmRequest extends BaseRequest
 {
 
     /**
@@ -15,11 +15,11 @@ class CreateOrderRequest extends BaseRequest
     public function rules()
     {
         return [
-            'gid' => 'required',
-            'type_id' => 'required|array',
-            //  ids是数组 .*表示数组里面的元素
+            'goods_id' => 'required|integer|min:0', // 商品ID
+            'gid' => 'required', // 购买商品前的 token
+            'type_id' => 'required|array', // 购买商品的属性Id
             'type_id.*' => 'required|integer|min:0',
-            'number' => 'required',
+            'number' => 'required', // 购买商品数量
         ];
     }
 

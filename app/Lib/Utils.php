@@ -81,4 +81,15 @@ class Utils
         }
         return $result;
     }
+
+    /**
+     * 判断一个时间戳是否过期
+     *
+     * @param integer $time 时间戳
+     * @return boolean
+     */
+    public static function isExpired(int $time): bool
+    {
+        return time() >= $time;
+    }
 }

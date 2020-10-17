@@ -65,15 +65,6 @@ class RetJson implements JsonRetInterface
      */
     protected $retCode = 200;
 
-    /**
-     * 响应主体时面的响应key.
-     *
-     * 针对有响应数据时可定义的响应键
-     *
-     * @var string
-     */
-    protected $replyKey = 'msg';
-
     public function __construct(int $statusCode = 200, array $headers = [])
     {
         $this->statusCode = $statusCode;
@@ -321,22 +312,6 @@ class RetJson implements JsonRetInterface
             'headers' => $this->headers,
             'body' => $this->body,
         ];
-    }
-
-    /**
-     * Handle dynamic static method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        dd('call call call');
-        if (in_array($method, ['entity', 'list', 'error', 'msg', 'single'])) {
-            return static::pure()->$method(...$parameters);
-        }
-        throw new \BadFunctionCallException("没有{$method}实例方法");
     }
 
     /**

@@ -20,7 +20,7 @@ abstract class RedisRepository
      *
      * @var string
      */
-    protected $key;
+    protected $key = '';
 
     /**
      * redis 实例对象
@@ -43,5 +43,11 @@ abstract class RedisRepository
             return $this->key . ':' . $mark;
         }
         return $this->key;
+    }
+
+    public function refersh(string $key, int $exp): bool
+    {
+        $ttl = $this->redis->ttl($key);
+        return $this->redis->expire($key, $ttl + $exp);
     }
 }

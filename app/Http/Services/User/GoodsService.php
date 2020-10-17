@@ -7,7 +7,7 @@ use App\Http\Requests\IDRequest;
 use App\Lib\RetJson;
 use App\Repositories\Category;
 use App\Repositories\GoodsAccess;
-use App\Repositories\OrderToken;
+use App\Repositories\GoodsToken;
 use App\Repositories\SectionType;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -102,6 +102,8 @@ class GoodsService
     /**
      * 获取商品信息
      *
+     * BUYSTEP: 步骤一,获取商品信息，并生成该 商家+用户+商品 之间的唯一商品 token
+     * 
      * @param IDRequest $request
      * @return RetInterface
      */
@@ -109,11 +111,11 @@ class GoodsService
     {
         $goodsId = $request->input('id');
         //1--为当次页面刷新得到一个唯一的md5下单值
-        $key = md5(time() . USER_UID . $goodsId);
-        OrderToken::singleton()->create($key, $goodsId);
+        
+        $sign = GoodsToken::singleton()->create(USER_UID, $goodsId);
         return RetJson::pure()->entity([
             'id' => $goodsId,
-            'sign' => $key,
+            'sign' => $sign,
         ]);
     }
 }

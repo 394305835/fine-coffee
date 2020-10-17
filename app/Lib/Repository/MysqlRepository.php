@@ -26,6 +26,17 @@ abstract class MysqlRepository implements ReadRepository, DeleteRepository, Upda
     use BaseRepository;
 
     /**
+     * 数据正常
+     */
+    const NORMAL = 1;
+
+    /**
+     * 数据被禁止或被删除
+     */
+    const PROHIBIT = 0;
+
+
+    /**
      * 对应的模型对象
      *
      * @var Model
