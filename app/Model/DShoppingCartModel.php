@@ -18,7 +18,7 @@ use App\Lib\Constans;
  * @property int|float $discount 商品折扣价格,也就是优惠了多少钱
  * @property int|float $discount_price 商品折扣金额,也就是优惠会的商品单价
  * @property int|float $actual   实际应支付
- * @property string $gid   购物车商品 token
+ * @property string $sign   购物车商品 token
  * 
  * @method string createUUID(int $uid, int $goodsId, array $typeId)
  * 
@@ -56,7 +56,7 @@ class DShoppingCartModel
      *
      * @var string
      */
-    public $gid;
+    public $sign;
 
     /**
      * 购买商品数量
@@ -132,13 +132,13 @@ class DShoppingCartModel
         int $discount,
         int $discount_price,
         int $actual,
-        string $gid = ""
+        string $sign = ""
     ) {
-        $this->cart_id = $this->createUUID($userId, $goodsId, $typeId);
+        $this->cart_id = $this->createUUID($userId, $goodsId, $typeId, $sign);
         $this->type_title = $type_title;
         $this->number = $number;
         $this->price = $price;
-        $this->gid = $gid;
+        $this->sign = $sign;
         $this->discount = $discount;
         $this->discount_price = $discount_price;
         $this->actual = $actual;
@@ -156,7 +156,7 @@ class DShoppingCartModel
      * @param array $typeId
      * @return string
      */
-    public function createUUID(int $uid, int $goodsId, array $typeId): string
+    public function createUUID(int $uid, int $goodsId, array $typeId, string $sign = ''): string
     {
         $this->user_id = $uid;
         $this->goods_id = $goodsId;
@@ -165,6 +165,6 @@ class DShoppingCartModel
         sort($typeId);
         $this->type_id = implode(',', $typeId);
 
-        return md5($uid . $goodsId . $this->type_id);
+        return md5($uid . $goodsId . $this->type_id . $sign);
     }
 }

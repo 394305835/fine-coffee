@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\Lib\Constans;
 
 /**
  * 
@@ -13,7 +12,7 @@ use App\Lib\Constans;
  * @property int $place   订单生成时间,也就是当用户点击进入支付页面开始算起
  * @property int $etime   订单到期时间
  * @property int $status  订单状态,默认状态为1正常
- * @property DShoppingCartModel|DShoppingCartModel[] $shopcart   购物车信息,一条订单可多个购物车
+ * @property DShoppingCartModel|DShoppingCartModel[] $shopcart   购物车信息,一条订单可多个购物车(array)
  * 
  * 
  * 队列订单模型

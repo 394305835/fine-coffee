@@ -32,8 +32,10 @@ class GoodsToken extends RedisRepository
      */
     public function create(int $userId, int $goodsId): string
     {
+        //创建之前先删除因为38排
         $this->remove($userId, $goodsId);
         $token = $this->createToken($userId, $goodsId);
+        // hset这个方法不会覆盖旧值，只会旧值覆盖新值
         $res = $this->redis->hset($this->getKey($userId), $goodsId, $token);
         return $res ? $token : '';
     }
@@ -75,6 +77,14 @@ class GoodsToken extends RedisRepository
         return $_token ? $_token === $token : false;
     }
 
+
+    /**
+     * 创建一个Token
+     *
+     * @param integer $userId
+     * @param integer $goodsId
+     * @return string
+     */
     protected function createToken(int $userId, int $goodsId): string
     {
         return md5(time() . $userId . $goodsId);

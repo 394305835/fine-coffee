@@ -47,11 +47,11 @@ class OrderService extends UserBaseService
     {
         // 1--拿到要生成订单的TOKEN是否有效
         $goodsId = (int) $request->input('goods_id');
-        $gid = $request->input('gid');
+        $sign = $request->input('sign');
 
         $repo = GoodsToken::singleton();
         // 判断用户对应的商品 token 是否有有效
-        if (!$repo->checkToken(USER_UID, $goodsId, $gid)) {
+        if (!$repo->checkToken(USER_UID, $goodsId, $sign)) {
             return RetJson::pure()->error('请刷新');
         }
 
@@ -72,9 +72,9 @@ class OrderService extends UserBaseService
         $discount = 0;
         $sectionType = "大/热/糖";
 
-        // IMPORTANT: 购物车生成成功，删除商品下单唯一 token
+        // IMPROATANT: 购物车生成成功，删除商品下单唯一 token
         // 防止恶意下单，或重复下单
-        $repo->remove(USER_UID, $goodsId);
+        // $repo->remove(USER_UID, $goodsId);
 
 
         // 4 并返回与购物车对应的数据
@@ -89,7 +89,7 @@ class OrderService extends UserBaseService
                 $discount,   // 折扣,优惠金额
                 0,  // 折扣后的单价
                 10,  // 实际支付金额
-                $gid
+                $sign
             )
         );
     }
@@ -102,12 +102,14 @@ class OrderService extends UserBaseService
      */
     public function addToCart(OrderComfirmRequest $request): RetInterface
     {
+        //生成一个购物车信息
         $ret = $this->getShoppingCart($request);
         $body = $ret->getBody();
 
         if (!empty($body['entity'])) {
             /** @var DShoppingCartModel */
             $shop = $body['entity'];
+            // user_id=1,goods_id=1,type_id=1,2  用
 
             // 3.1--为用户创建一条购物车信息
             $repo = ShoppingCart::singleton(USER_UID);
@@ -118,17 +120,23 @@ class OrderService extends UserBaseService
                 // 3.3.1 判断上一次商品是否过期
                 if (Utils::isExpired($oldShop->etime)) {
                     // 重新加入该同样的商品
+                    // 3.5 加入购物车--新
+                    $repo->create($shop);
                 } else {
                     // 将之前的购物车商品数量累加
                     // NOTE: 如果交换位置会变成当前进入的确认页购买数量会累加
                     // $shop->number += $oldShop->number;
                     $oldShop->number += $shop->number;
+                    // 3.5 加入购物车--老
+                    $repo->create($oldShop);
                 }
+            } else {
+                $repo->create($shop);
             }
+            dump($oldShop);
+            dd($shop);
             // 3.4 处理金额
             // EXP: 折扣后商品单价 = 原单价 - 折扣金额
-            // 3.5 加入购物车
-            $repo->create($oldShop ? $oldShop : $shop);
         }
 
         return $ret;
@@ -139,6 +147,7 @@ class OrderService extends UserBaseService
      * 
      * BUYSTEP: 步骤二,每次点击都会为用户生成该商品购物车信息，然后返回估计订单(就是购物车一些相关的信息)
      * 
+     * TODO:疑问？库存的问题，减库存是在哪个时机去减库存
      * 确认订单会占用库存,也就是进入到该页面之前会判断库存是否充足
      *
      * @param OrderComfirmRequest $request
@@ -159,12 +168,12 @@ class OrderService extends UserBaseService
         /** @var DShoppingCartModel */
         $shop = $body['entity'];
 
+        // TODO:严格验证商品库存
+        // NOTE:规避超卖情况
         // 1. 查询库存数量
-        $sku = SKU::singleton()->getSKU($shop->goods_id);
-        if ($sku < 1) {
+        if (!SKU::singleton()->checkSKU($shop->goods_id, $shop->number)) {
             return RetJson::pure()->error('商品库存不足');
         }
-
         return RetJson::pure()->entity($shop);
     }
 
@@ -204,9 +213,10 @@ class OrderService extends UserBaseService
         $order->shopcart = $shops;
         $order->pay_id = (int) $request->input('pay_id');
 
+        // (new \App\Jobs\CreateOrderPodcast($order))->handle();
         // 将订单入队列，交给队列生成订单
         \App\Jobs\CreateOrderPodcast::dispatch($order);
-        // 然后让该订单20分钟后自动取消
+        // 然后让该订单10分钟后自动取消
         // PS:也可以让订单队列作这件事
         \App\Jobs\CancleOrderPodcast::dispatch($order->uuid, $etime);
 

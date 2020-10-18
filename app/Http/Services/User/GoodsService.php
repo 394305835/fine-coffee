@@ -111,10 +111,12 @@ class GoodsService
     {
         $goodsId = $request->input('id');
         //1--为当次页面刷新得到一个唯一的md5下单值
-        
+
         $sign = GoodsToken::singleton()->create(USER_UID, $goodsId);
         return RetJson::pure()->entity([
+            // 用户商品信息
             'id' => $goodsId,
+            //给用户下单的一个唯一凭证
             'sign' => $sign,
         ]);
     }
