@@ -72,7 +72,7 @@ class AuthAdminApi
         /**
          * 用户身份ID
          */
-        define('REQUEST_UID', $this->token->getPayload()->uid);
+        defined('REQUEST_UID') or define('REQUEST_UID', $this->token->getPayload()->uid);
 
         // $this->log->write();
 

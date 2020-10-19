@@ -40,9 +40,14 @@ abstract class RedisRepository
     public function getKey(string $mark = ''): string
     {
         if ($mark) {
-            return $this->key . ':' . $mark;
+            return $this->compose($this->key, $mark);
         }
         return $this->key;
+    }
+
+    public function compose(string $key, string $staff): string
+    {
+        return $key . ':' . $staff;
     }
 
     public function refersh(string $key, int $exp): bool

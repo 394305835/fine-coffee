@@ -69,7 +69,7 @@ class AuthUserApi
         /**
          * 用户身份ID
          */
-        define('USER_UID', $this->token->getPayload()->uid);
+        defined('USER_UID') or define('USER_UID', $this->token->getPayload()->uid);
 
         // $this->log->write();
 

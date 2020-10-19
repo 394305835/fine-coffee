@@ -7,7 +7,7 @@ use App\Http\Requests\IDRequest;
 use App\Lib\RetJson;
 use App\Repositories\Category;
 use App\Repositories\GoodsAccess;
-use App\Repositories\GoodsToken;
+use App\Repositories\User\GoodsSign;
 use App\Repositories\SectionType;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -112,7 +112,7 @@ class GoodsService
         $goodsId = $request->input('id');
         //1--为当次页面刷新得到一个唯一的md5下单值
 
-        $sign = GoodsToken::singleton()->create(USER_UID, $goodsId);
+        $sign = GoodsSign::singleton(USER_UID)->create($goodsId);
         return RetJson::pure()->entity([
             // 用户商品信息
             'id' => $goodsId,

@@ -11,8 +11,8 @@ use App\Lib\RetJson;
 use App\Lib\Utils;
 use App\Model\DOrdereModel;
 use App\Model\DShoppingCartModel;
-use App\Repositories\GoodsToken;
-use App\Repositories\ShoppingCart;
+use App\Repositories\User\GoodsSign;
+use App\Repositories\User\ShoppingCart;
 use Illuminate\Support\Str;
 
 /**
@@ -49,9 +49,9 @@ class OrderService extends UserBaseService
         $goodsId = (int) $request->input('goods_id');
         $sign = $request->input('sign');
 
-        $repo = GoodsToken::singleton();
+        $repo = GoodsSign::singleton(USER_UID);
         // 判断用户对应的商品 token 是否有有效
-        if (!$repo->checkToken(USER_UID, $goodsId, $sign)) {
+        if (!$repo->checkToken($goodsId, $sign)) {
             return RetJson::pure()->error('请刷新');
         }
 
@@ -74,7 +74,7 @@ class OrderService extends UserBaseService
 
         // IMPROATANT: 购物车生成成功，删除商品下单唯一 token
         // 防止恶意下单，或重复下单
-        // $repo->remove(USER_UID, $goodsId);
+        $repo->remove($goodsId);
 
 
         // 4 并返回与购物车对应的数据
@@ -125,16 +125,14 @@ class OrderService extends UserBaseService
                 } else {
                     // 将之前的购物车商品数量累加
                     // NOTE: 如果交换位置会变成当前进入的确认页购买数量会累加
-                    // $shop->number += $oldShop->number;
                     $oldShop->number += $shop->number;
+                    $oldShop->etime = $shop->etime;
                     // 3.5 加入购物车--老
                     $repo->create($oldShop);
                 }
             } else {
                 $repo->create($shop);
             }
-            dump($oldShop);
-            dd($shop);
             // 3.4 处理金额
             // EXP: 折扣后商品单价 = 原单价 - 折扣金额
         }
