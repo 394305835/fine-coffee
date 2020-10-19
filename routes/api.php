@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\User\LoginController;
+use App\Http\Controllers\User\OrderController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\URL;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
+
+//测试自动下单接口
+Route::get('/test_buy', [OrderController::class, 'payOrder']);
 
 Route::get('hello', function () {
     dd(URL::previous());
@@ -35,6 +40,9 @@ Route::middleware('cors')->group(function () {
     // 商家端登录与登出
     Route::post('/seller/login', [\App\Http\Controllers\Seller\LoginController::class, 'login']);
     Route::post('/seller/logout', [\App\Http\Controllers\Seller\LoginController::class, 'logout']);
+
+    //支付成功后回调接口
+    Route::post('/notif_order', [\App\Http\Controllers\Net\ApiController::class, 'orderNotif']);
 });
 
 // 后台端

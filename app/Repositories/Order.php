@@ -25,4 +25,28 @@ class Order extends MysqlRepository
     {
         return OrderModel::singleton();
     }
+    /**
+     * 用UUID获取订单信息
+     *
+     * @param string $uuid
+     * @return OrderModel|null
+     */
+    public function getOrderByUuid(string $uuid): ?OrderModel
+    {
+        return $this->model
+            ->select('id', 'seller_id', 'user_id', 'pay_id', 'pay_status', 'status', 'place_time', 'pay_time', 'created_time')
+            ->where('uuid', $uuid)
+            ->get();
+    }
+
+    /**
+     * 更新UUID所在的订单的支付状态的值
+     *
+     * @param [type] $uuid
+     * @return boolean
+     */
+    public function updateByUuid(string $uuid, array $bean): bool
+    {
+        return $this->update([['uuid', '=', $uuid]], $bean);
+    }
 }
