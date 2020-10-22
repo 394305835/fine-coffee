@@ -23,4 +23,17 @@ class Seller extends MysqlRepository
     {
         return $this->findBy('username', $username);
     }
+
+    /**
+     * 用主键更新
+     *
+     * @Override
+     * @param integer $id
+     * @param array $bean
+     * @return boolean
+     */
+    public function updateById(int $id, array $bean): bool
+    {
+        return $this->update([['id', '=', $id]], $bean);
+    }
 }

@@ -23,7 +23,8 @@ class SectionType extends MysqlRepository
     /**
      * 根据商品属性选择ID来查询商品属性选择列表
      *
-     * @param [type] $typeIds
+     * @join
+     * @param array $typeIds
      * @return Collection
      */
     public function getTypeByIds($typeIds): Collection

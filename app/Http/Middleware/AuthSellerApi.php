@@ -69,7 +69,7 @@ class AuthSellerApi
         /**
          * 商家身份ID
          */
-        defined('AUTH_SELLER_UID') or define('AUTH_SELLER_UID', $this->token->getPayload()->uid);
+        defined('SELLER_UID') or define('SELLER_UID', $this->token->getPayload()->uid);
 
         // $this->log->write();
 

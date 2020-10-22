@@ -24,4 +24,9 @@ class Category extends MysqlRepository
     {
         return $this->model->query()->where('id', '<', 4)->orderBy($sort, $sortBy)->get($this->field);
     }
+
+    public function getCategoryByIds(array $categoryIds): Collection
+    {
+        return $this->model->whereIn('id', $categoryIds)->get($this->field);
+    }
 }

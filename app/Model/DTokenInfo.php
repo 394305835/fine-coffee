@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Contracts\Token;
+namespace App\Model;
 
 
-class TokenInfo
+class DTokenInfo
 {
     /**
      * 当前 token 信息类型.

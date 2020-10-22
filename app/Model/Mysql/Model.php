@@ -13,13 +13,13 @@ class Model extends EloquentModel
 {
     use BaseRepository;
 
-    /**
-     * 维护时间为时间戳
-     *
-     * @link https://carbon.nesbot.com/docs/
-     * @var string
-     */
-    protected $dateFormat = 'U';
+    // /**
+    //  * 维护时间为时间戳
+    //  *
+    //  * @link https://carbon.nesbot.com/docs/
+    //  * @var string
+    //  */
+    // protected $dateFormat = 'U';
 
     /**
      * 获取当前模型的 attributes

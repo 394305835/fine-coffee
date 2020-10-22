@@ -6,6 +6,7 @@ use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\GoodsAccessModel;
 use App\Model\Mysql\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class GoodsAccess extends MysqlRepository
 {
@@ -34,8 +35,13 @@ class GoodsAccess extends MysqlRepository
     }
 
 
+    public function getAccessByGoodsIds(array $goodsIds): Collection
+    {
+        return $this->model->whereIn('goods_id', $goodsIds)->get($this->field);
+    }
     public function getAccessByGoodsId(int $goodsId): ?GoodsAccessModel
     {
         return $this->findBy('goods_id', $goodsId);
     }
+
 }

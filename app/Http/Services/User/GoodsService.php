@@ -31,14 +31,14 @@ class GoodsService
      */
     public function getGoodsList($request): RetInterface
     {
-        // // 整体逻辑--商品和类别--这里做完了，就查后面的两个连接，然后把需要的数据拼接到这里的查询结果来
+        // 整体逻辑--商品和类别--这里做完了，就查后面的两个连接，然后把需要的数据拼接到这里的查询结果来
 
-        // //第一步   把类别查询出来
+        //第一步   把类别查询出来
         $categoryList = Category::singleton('id', 'title', 'sort')->getListSort('sort', 'desc')->toArray();
         $categoryList = array_column($categoryList, null, 'id');
-        // //拿到查询类别的ID
+        //拿到查询类别的ID
         $categoryIds = array_keys($categoryList);
-        // //拿到类别的ID查询类别对应商品的信息，按照类别分类显示。groupBy()需要在get()后使用
+        //拿到类别的ID查询类别对应商品的信息，按照类别分类显示。groupBy()需要在get()后使用
         $goodsList = GoodsAccess::singleton()->getGoodsByCategoryIds($categoryIds);
 
         //第二步  1,2

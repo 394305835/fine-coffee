@@ -27,7 +27,7 @@ namespace App\Model\Mysql;
  *   `created_at` int(11) DEFAULT NULL,
  *   `updated_at` int(11) DEFAULT NULL,
  *   PRIMARY KEY (`id`) USING BTREE
- * ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+ * ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
  * ```
  */
 class SellerModel extends Model

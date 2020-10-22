@@ -4,13 +4,11 @@ namespace App\Http\Services\Seller;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Contracts\Service\Access\LoginServiceInterface;
-use App\Contracts\Token\TokenInfo;
-use App\Contracts\Token\TokenInterface;
+use App\Model\DTokenInfo;
 use App\Lib\Jwt\SellerJwt;
 use App\Lib\RetCode;
 use App\Lib\RetJson;
 use App\Repositories\Seller;
-use App\Repositories\Token\SellerToken;
 use Illuminate\Http\Request;
 
 
@@ -42,32 +40,30 @@ class LoginService implements LoginServiceInterface
         $repo = Seller::singleton('id', 'password');
         $username = $request->input('username');
         $password = $request->input('password');
-        $ret = RetJson::pure();
         $seller = $repo->getSellerByUserName($username);
 
         if ($seller) {
-            $info = new TokenInfo('Authorization');
+            $info = new DTokenInfo('Authorization');
             $info->repeat = true;
-            
             try {
                 if (decrypt($seller->password) != $password) {
-                    return $ret->setRetCode(RetCode::AUTH_USER_WRONG_PASSWORD)->error();
+                    return RetJson::pure()->setRetCode(RetCode::AUTH_USER_WRONG_PASSWORD)->error();
                 }
-            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-                return $ret->setRetCode(RetCode::SERVER_ERROR)->error();
+                // 获取 token 是否已经存在
+                if (!$info->token = $this->token->getRepo()->getToken($seller->id)) {
+                    $info->repeat = false;
+                    $info->token = $this->token->create(['uid' => $seller->id]);
+                }
+                // 刷新 Token
+                $info->repeat && $this->token->refresh($info->token);
+                unset($seller->password);
+            } catch (\Throwable $th) {
+                return RetJson::pure()->throwable($th);
             }
 
-            // 获取 token 是否已经存在
-            if (!$info->token = $this->token->getRepo()->getToken($seller->id)) {
-                $info->repeat = false;
-                $info->token = $this->token->create(['uid' => $seller->id]);
-            }
-            // 刷新 Token
-            $info->repeat && $this->token->refresh($info->token);
-            unset($seller->password);
-            return $ret->setBody($info);
+            return RetJson::pure()->setBody($info);
         }
-        return $ret->setRetCode(RetCode::AUTH_USER_NOT_EXIST)->error();
+        return RetJson::pure()->setRetCode(RetCode::AUTH_USER_NOT_EXIST)->error();
     }
 
     /**

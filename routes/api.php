@@ -120,5 +120,10 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
 });
 
 // 商家端
-Route::namespace('Seller')->prefix('seller')->middleware('cors')->group(function () {
+Route::namespace('Seller')->prefix('seller')->middleware(['cors', 'auth.seller.api'])->group(function () {
+    // 头像上传
+    Route::post('/upload', 'ApiController@upLoadTheme');
+
+    // 商品信息获取
+    Route::get('/goods', 'GoodsController@getGoodsList');
 });
