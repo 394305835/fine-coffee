@@ -142,3 +142,12 @@ class FileService
         return true;
     }
 }
+
+/**
+ * 1--接收要上传头像
+ * 2--把这个头像保存起来
+ * $this->savetheme($theme);
+ * 
+ * 3--返回头像在服务器上的地址
+ * return 
+ */

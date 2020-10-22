@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Lib\RetCode;
 use App\Model\DOrdereModel;
 use App\Repositories\Order;
 use App\Repositories\OrderCart;

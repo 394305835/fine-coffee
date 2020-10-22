@@ -100,8 +100,69 @@ class Goods extends MysqlRepository
         return [];
     }
 
+    /**
+     * 根据商品ID查询商品
+     *
+     * @param integer $goodsId
+     * @return GoodsModel|null
+     */
     public function getGoodsById(int $goodsId): ?GoodsModel
     {
         return $this->findBy('id', $goodsId);
+    }
+
+    /**
+     * 判断商品表中是否存在相同的中文名和英文名
+     *
+     * @param string $name
+     * @param string $subtitle
+     * @return Collection
+     */
+    public function getGoodsNameOrsubTitle(string $name, string $subtitle): ?GoodsModel
+    {
+        return $this->model
+            ->query()
+            ->where('name', $name)
+            ->orWhere('subtitle', $subtitle)
+            ->first();
+    }
+
+    /**
+     * 新增商品
+     *
+     * @param array $bean
+     * @return int
+     */
+    public function insertGoods(array $bean): int
+    {
+        return $this->model->query()->insertGetId([
+            'theme' => $bean['theme'],
+            'name' => $bean['name'],
+            'subtitle' => $bean['subtitle'],
+            'price' => $bean['price'],
+        ]);
+    }
+
+    /**
+     * 根据商品ID删除商品表中的记录
+     *
+     * @param string $goodsId
+     * @return boolean
+     */
+    public function deleteGoodsByGoodsId(array $goodsId): ?bool
+    {
+        return !!$this->model->whereIn('id', $goodsId)->delete();
+    }
+
+    /**
+     * 根据商品ID更新商品信息
+     *
+     * @param string $goodsId
+     * @param array $bean
+     * @return boolean
+     */
+    public function updateById(string $goodsId, array $bean): ?bool
+    {
+        return !!$this->model->where('id', $goodsId)->update($bean);
     }
 }

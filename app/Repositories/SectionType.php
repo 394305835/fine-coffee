@@ -43,4 +43,18 @@ class SectionType extends MysqlRepository
     {
         return $this->model->whereIn('id', $typeIds)->get($this->field);
     }
+
+    /**
+     * 判断商品属性选择是否存在
+     *
+     * @param [type] $typeIds
+     * @return Collection
+     */
+    public function hasSectionType(array $typeIds): Collection
+    {
+        return $this->model
+            ->select('section_id')
+            ->whereIn('id', $typeIds)
+            ->get();
+    }
 }

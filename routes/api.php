@@ -88,6 +88,13 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         Route::delete('/rule', 'AuthRuleController@deleteRule');
         // 访问规则-状态改变
         Route::put('/rule/status', 'AuthRuleController@changeRuleStatus');
+
+        //后台商品增加
+        Route::post('/goods', 'AdminGoodsController@addGoods');
+        //后台商品删除
+        Route::delete('/goods', 'AdminGoodsController@deleteGoods');
+        //后台商品修改
+        Route::put('/goods', 'AdminGoodsController@saveGoods');
     });
 });
 
