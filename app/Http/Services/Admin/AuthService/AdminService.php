@@ -98,7 +98,6 @@ class AdminService extends Auth
                     DB::commit();
                     return RetJson::pure()->msg('添加成功');
                 } catch (\Throwable $th) {
-                    dd($th);
                     DB::rollBack();
                     return RetJson::pure()->throwable($th);
                 }

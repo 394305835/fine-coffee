@@ -11,8 +11,11 @@ use App\Lib\RetJson;
 use App\Lib\Utils;
 use App\Model\DOrdereModel;
 use App\Model\DShoppingCartModel;
+use App\Repositories\Goods;
+use App\Repositories\SectionType;
 use App\Repositories\User\GoodsSign;
 use App\Repositories\User\ShoppingCart;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
@@ -64,13 +67,13 @@ class OrderService extends UserBaseService
         // }
 
         //3--拿到商品信息
-        // $goods = Goods::singleton('id', 'theme', 'name', 'price', 'is_sale')->getGoodsById($goodsId);
-        // $sectionType = SectionType::singleton('title')->getGoodsByIds($typeIds)->pluck('title');
+        $goods = Goods::singleton('id', 'theme', 'name', 'price', 'is_sale')->getGoodsById($goodsId);
+        $sectionType = SectionType::singleton('title')->getGoodsByIds($typeIds)->pluck('title')->toArray();
 
         $number = (int) $request->input('number');
-        $price = 10;
+        $price = $goods->price;
         $discount = 0;
-        $sectionType = "大/热/糖";
+        $sectionType = implode('/', $sectionType);
 
         // IMPROATANT: 购物车生成成功，删除商品下单唯一 token
         // 防止恶意下单，或重复下单
@@ -175,7 +178,6 @@ class OrderService extends UserBaseService
         return RetJson::pure()->entity($shop);
     }
 
-
     /**
      * 立即支付
      * 
@@ -187,9 +189,10 @@ class OrderService extends UserBaseService
     public function payOrder(OrderPayRequest $request): RetInterface
     {
         $cartIds = $request->input('cart_id');
-        // 1. 获取购物车信息，可能有多个
+        // // 1. 获取购物车信息，可能有多个
         $repo = ShoppingCart::factory(USER_UID);
         $shops = [];
+
 
         foreach ($cartIds as $_cartId) {
             $shop = $repo->getShopById($_cartId);
@@ -197,8 +200,34 @@ class OrderService extends UserBaseService
                 // 404: 购买的购物车信息不存在
                 return RetJson::make(404)->error('网络错误');
             }
+            // 
             $shops[] = $shop;
+            // array_push($shops, $shop);
         }
+
+        // $goodsTypeIds = [1, 2, 3, 4];
+        // $typeIds = array_rand(array_flip($goodsTypeIds), 3);
+        // $goodsId = 1;
+        // $user_id = rand(1, 10);
+        // $number = rand(1, 3);
+        foreach ($shops as $_shops) {
+            if (!SKU::singleton()->checkSKU($_shops->goods_id, $_shops->number)) {
+                return RetJson::pure()->msg('货物被抢光啦');
+            }
+        }
+
+        // $shops[] = new DShoppingCartModel(
+        //     $user_id,
+        //     $goodsId,
+        //     $typeIds,
+        //     '大/糖/热',
+        //     $number,  // 购买数量
+        //     200,  // 单价
+        //     100,   // 折扣,优惠金额
+        //     100,  // 折扣后的单价
+        //     100,  // 实际支付金额
+        //     GoodsSign::singleton($user_id)->getToken($goodsId)
+        // );
 
         // 商家信息
         $sellerId = 1;
@@ -219,10 +248,10 @@ class OrderService extends UserBaseService
         \App\Jobs\CancleOrderPodcast::dispatch($order->uuid, $etime);
 
         // 以上没有任何问题，需要将购物车该条购物车清掉
-        $repo = ShoppingCart::factory(USER_UID);
-        foreach ($cartIds as $_cartId) {
-            $repo->remove($_cartId);
-        }
+        // $repo = ShoppingCart::factory(USER_UID);
+        // foreach ($cartIds as $_cartId) {
+        //     $repo->remove($_cartId);
+        // }
 
         return RetJson::pure()->msg();
     }
