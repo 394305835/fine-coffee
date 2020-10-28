@@ -6,6 +6,7 @@ use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\Model;
 use App\Model\Mysql\SectionTypeModel;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Queue\Jobs\BeanstalkdJob;
 
 class SectionType extends MysqlRepository
 {
@@ -57,5 +58,57 @@ class SectionType extends MysqlRepository
             ->select('section_id')
             ->whereIn('id', $typeIds)
             ->get();
+    }
+
+    /**
+     * 查询商品属性表中是否有该属性选择
+     *
+     * @param string $sectionTitle
+     * @return GoodsSectionModel
+     */
+    public function getTitleByTypeTitle(string $Title): ?SectionTypeModel
+    {
+        return $this->model->where('title', $Title)->first();
+    }
+
+    /**
+     * 新增商品属性选择
+     *
+     * @param integer $id
+     * @param string $title
+     * @return boolean
+     */
+    public function insertType(int $id, array $bean): bool
+    {
+        return $this->model->query()->insert([
+            'id' => $id,
+            'section_id' => $bean['sectionId'],
+            'title' => $bean['title']
+        ]);
+    }
+
+    /**
+     * 根据ID删除商品属性选择
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function deleteById(array $ids)
+    {
+        return $this->model->whereIn('id', $ids)->delete();
+    }
+
+    /**
+     * 根据ID修改商品属性选择
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function updateById(int $id, array $post)
+    {
+        return $this->model->where('id', $id)->update([
+            'section_id' => $post['sectionId'],
+            'title' => $post['title'],
+        ]);
     }
 }

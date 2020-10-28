@@ -18,4 +18,52 @@ class GoodsSection extends MysqlRepository
     {
         return GoodsSectionModel::singleton();
     }
+
+    /**
+     * 查询商品属性表中是否有该属性
+     *
+     * @param string $sectionTitle
+     * @return GoodsSectionModel
+     */
+    public function getTitleBySectionTitle(string $Title): ?GoodsSectionModel
+    {
+        return $this->model->where('title', $Title)->first();
+    }
+
+    /**
+     * 新增商品属性
+     *
+     * @param integer $id
+     * @param string $title
+     * @return boolean
+     */
+    public function insertSections(int $id, array $title): bool
+    {
+        return $this->model->query()->insert([
+            'id' => $id,
+            'title' => $title
+        ]);
+    }
+
+    /**
+     * 根据ID删除商品属性
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function deleteById(array $ids)
+    {
+        return $this->model->whereIn('id', $ids)->delete();
+    }
+
+    /**
+     * 根据ID修改商品属性
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function updateById(int $id, array $title)
+    {
+        return $this->model->where('id', $id)->update(['title' => $title]);
+    }
 }

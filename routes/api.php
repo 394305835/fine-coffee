@@ -95,6 +95,20 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         Route::delete('/goods', 'AdminGoodsController@deleteGoods');
         //后台商品修改
         Route::put('/goods', 'AdminGoodsController@saveGoods');
+
+        //后台商品属性增加
+        Route::post('/section', 'AdminSectionsController@addSections');
+        //后台商品属性删除
+        Route::delete('/section', 'AdminSectionsController@deleteSections');
+        //后台商品属性修改
+        Route::put('/section', 'AdminSectionsController@saveSections');
+
+        //后台商品属性选择增加
+        Route::post('/type', 'AdminTypeController@addType');
+        //后台商品属性选择删除
+        Route::delete('/type', 'AdminTypeController@deleteType');
+        //后台商品属性选择修改
+        Route::put('/type', 'AdminTypeController@saveType');
     });
 });
 
