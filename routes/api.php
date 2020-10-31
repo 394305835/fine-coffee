@@ -141,6 +141,8 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
 
     //获取商品详情信息-- 商品详情页面
     Route::get('/goods', 'GoodsController@getGoodsInfo');
+    //获取商品信息  
+    Route::get('/goods/list', 'GoodsController@getGoodsList');
 
     // 商品订单--立即购买-- 订单确认页面
     Route::post('/comfirm_order', 'OrderController@comfirmOrder');
