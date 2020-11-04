@@ -51,6 +51,9 @@ Route::middleware('cors')->group(function () {
 
     //支付成功后回调接口
     Route::post('/notif_order', [\App\Http\Controllers\Net\ApiController::class, 'orderNotif']);
+
+    //用户商品信息获取(PS:不需要登录也可以查看商品)
+    Route::get('/goods/list', [\App\Http\Controllers\User\GoodsController::class, 'getGoodsList']);
 });
 
 // 后台端
@@ -160,8 +163,6 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
 
     //获取商品详情信息-- 商品详情页面
     Route::get('/goods', 'GoodsController@getGoodsInfo');
-    //用户商品信息获取(PS:不需要登录也可以查看商品)
-    Route::get('/goods/list', 'GoodsController@getGoodsList');
 
     // 商品订单--立即购买-- 订单确认页面
     Route::post('/comfirm_order', 'OrderController@comfirmOrder');

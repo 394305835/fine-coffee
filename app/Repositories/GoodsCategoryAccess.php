@@ -51,7 +51,7 @@ class GoodsCategoryAccess extends MysqlRepository
         return $this->model->query()
             ->join('goods', 'goods.id', '=', 'goods_category_access.goods_id')
             // ->where('seller_id', $seller_id)
-            ->when($categoryId, function($query) use ($categoryId) {
+            ->when($categoryId, function ($query) use ($categoryId) {
                 $query->where('category_id', $categoryId);
             })
             ->paginate($limit, [
