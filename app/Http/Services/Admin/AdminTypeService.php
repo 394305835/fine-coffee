@@ -5,10 +5,12 @@ namespace App\Http\Services\Admin;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\IDRequest;
 use App\Http\Requests\User\Goods\AddTypeRequest;
+use App\Http\Requests\User\Goods\IndexTypesRequest;
 use App\Http\Requests\User\Goods\SaveSectionsRequest;
 use App\Http\Requests\User\Goods\SaveTypeRequest;
+use App\Lib\Parameter\LimitParam;
+use App\Lib\Parameter\SortParam;
 use App\Lib\RetJson;
-use App\Repositories\GoodsSection;
 use App\Repositories\SectionType;
 
 /**
@@ -76,5 +78,26 @@ class AdminTypeService
             SectionType::singleton()->UpdateById($id, $post);
         }
         return RetJson::pure()->msg('修改成功');
+    }
+
+    /**
+     * 查询商品属性选择
+     *
+     * @param IndexTypesRequest $request
+     * @return RetInterface
+     */
+    public function getTypes(IndexTypesRequest $request): RetInterface
+    {
+        //分页
+        list($limit) = (new LimitParam())->build();
+        //排序
+        $sp = new SortParam();
+        $sp->sort('id', 'desc');
+        $sort = $sp->build();
+        $typesList = SectionType::singleton()->getTypesList($limit, $sort);
+        if (!empty($request->input('title'))) {
+            $typesList->where('title', $request->input('title'));
+        }
+        return RetJson::pure()->list(($typesList->toArray()));
     }
 }

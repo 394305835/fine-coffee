@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\Model;
 use App\Model\Mysql\SectionTypeModel;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Queue\Jobs\BeanstalkdJob;
 
@@ -110,5 +111,22 @@ class SectionType extends MysqlRepository
             'section_id' => $post['sectionId'],
             'title' => $post['title'],
         ]);
+    }
+
+    /**
+     * 获取商品属性选择列表
+     *
+     * @param integer $limit
+     * @param array $sort
+     * @return Paginator|null
+     */
+    public function getTypesList(int $limit, array $sort): ?Paginator
+    {
+        $res = $this->model->query()->paginate($limit);
+        // foreach ($sort as $key => $value) {
+        //     // order_by只能一次次掉(同where)
+        //     $res->orderBy($key, $value);
+        // }
+        return $res;
     }
 }

@@ -87,18 +87,29 @@ class DOrdereModel
      */
     protected $created_at;
 
+
+    /**
+     * 订单总价
+     *
+     * @var float
+     */
+    public $total_price;
+
     public function __construct(
         string $uuid,
         int $seller_id,
         int $user_id,
         int $place,
-        int $etime
+        int $etime,
+        float $totalPrice
+
     ) {
         $this->uuid = $uuid;
         $this->seller_id = $seller_id;
         $this->user_id = $user_id;
         $this->place = $place;
         $this->etime = $etime;
+        $this->total_price = $totalPrice;
 
         $this->created_at = time();
     }

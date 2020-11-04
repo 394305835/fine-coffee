@@ -5,8 +5,10 @@ namespace App\Http\Services\Admin;
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\IDRequest;
 use App\Http\Requests\User\Goods\AddSectionsRequest;
+use App\Http\Requests\User\Goods\IndexSectionsRequest;
 use App\Http\Requests\User\Goods\SaveSectionsRequest;
-use App\Http\Services\User\Goods\Section;
+use App\Lib\Parameter\LimitParam;
+use App\Lib\Parameter\SortParam;
 use App\Lib\RetJson;
 use App\Repositories\GoodsSection;
 
@@ -74,5 +76,26 @@ class AdminSectionsService
             GoodsSection::singleton()->UpdateById($id, $title);
         }
         return RetJson::pure()->msg('修改成功');
+    }
+
+    /**
+     * 查询商品属性
+     *
+     * @param IndexSectionsRequest $request
+     * @return RetInterface
+     */
+    public function getSections(IndexSectionsRequest $request): RetInterface
+    {
+        //分页
+        list($limit) = (new LimitParam())->build();
+        //排序
+        $sp = new SortParam();
+        $sp->sort('id', 'desc');
+        $sort = $sp->build();
+        $sectionsList = GoodsSection::singleton()->getSectionsList($limit, $sort);
+        if (!empty($request->input('title'))) {
+            $sectionsList->where('title', $request->input('title'));
+        }
+        return RetJson::pure()->list(($sectionsList->toArray()));
     }
 }

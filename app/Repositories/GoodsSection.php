@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\GoodsSectionModel;
 use App\Model\Mysql\Model;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class GoodsSection extends MysqlRepository
 {
@@ -65,5 +67,22 @@ class GoodsSection extends MysqlRepository
     public function updateById(int $id, array $title)
     {
         return $this->model->where('id', $id)->update(['title' => $title]);
+    }
+
+    /**
+     * 获取商品属性列表
+     *
+     * @param integer $limit
+     * @param array $sort
+     * @return Collection|null
+     */
+    public function getSectionsList(int $limit, array $sort): ?Paginator
+    {
+        $res = $this->model->query()->paginate($limit);
+        // foreach ($sort as $key => $value) {
+        //     // order_by只能一次次掉(同where)
+        //     $res->orderBy($key, $value);
+        // }
+        return $res;
     }
 }

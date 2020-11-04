@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthAdminController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\OrderController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
@@ -22,6 +23,13 @@ use Illuminate\Support\Facades\URL;
 Route::get('/test_buy', [OrderController::class, 'payOrder']);
 
 Route::get('hello', function () {
+    try {
+        DB::table('dsdas')->get();
+    } catch (\Illuminate\Database\QueryException $th) {
+        dd($th->getTrace());
+    } catch (\Throwable $th) {
+        dd($th);
+    }
     dd(URL::previous());
 });
 
@@ -102,6 +110,8 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         Route::delete('/section', 'AdminSectionsController@deleteSections');
         //后台商品属性修改
         Route::put('/section', 'AdminSectionsController@saveSections');
+        //后台商品属性查询
+        Route::get('/sections', 'AdminSectionsController@getSections');
 
         //后台商品属性选择增加
         Route::post('/type', 'AdminTypeController@addType');
@@ -109,6 +119,17 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         Route::delete('/type', 'AdminTypeController@deleteType');
         //后台商品属性选择修改
         Route::put('/type', 'AdminTypeController@saveType');
+        //后台商品属性查询
+        Route::get('/types', 'AdminTypeController@getTypes');
+
+        //后台商品库存增加
+        Route::post('/sku', 'AdminSkuController@addSKU');
+        //后台商品库存删除
+        Route::delete('/sku', 'AdminSkuController@deleteSKU');
+        //后台商品库存修改
+        Route::put('/sku', 'AdminSkuController@saveSKU');
+        //后台商品库存查询
+        Route::get('/skus', 'AdminSkuController@getSKUS');
     });
 });
 
@@ -116,8 +137,6 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
 
 Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])->group(function () {
 
-    // //用户商品查询(PS:不需要登录也可以查看商品)
-    // Route::get('/query', 'GoodsController@ ');
     // 获取用户个人信息
     Route::get('/info', 'UserController@getUserInfo');
 
@@ -141,7 +160,7 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
 
     //获取商品详情信息-- 商品详情页面
     Route::get('/goods', 'GoodsController@getGoodsInfo');
-    //获取商品信息  
+    //用户商品信息获取(PS:不需要登录也可以查看商品)
     Route::get('/goods/list', 'GoodsController@getGoodsList');
 
     // 商品订单--立即购买-- 订单确认页面

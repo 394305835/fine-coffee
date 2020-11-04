@@ -122,6 +122,13 @@ class DShoppingCartModel
      */
     public $etime;
 
+    /**
+     * 商品中文名称
+     *
+     * @var string
+     */
+    public $goods_name;
+
     public function __construct(
         int $userId,
         int $goodsId,
@@ -132,7 +139,8 @@ class DShoppingCartModel
         int $discount,
         int $discount_price,
         int $actual,
-        string $sign = ""
+        string $sign = "",
+        string $goods_name
     ) {
         $this->cart_id = $this->createUUID($userId, $goodsId, $typeId, $sign);
         $this->type_title = $type_title;
@@ -142,6 +150,7 @@ class DShoppingCartModel
         $this->discount = $discount;
         $this->discount_price = $discount_price;
         $this->actual = $actual;
+        $this->goods_name = $goods_name;
 
         $this->btime = time();
         // 购物车过期时间

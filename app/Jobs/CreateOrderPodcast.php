@@ -42,7 +42,6 @@ class CreateOrderPodcast implements ShouldQueue
     public function handle()
     {
         //2--插入order表信息
-
         $orderBean = [
             'uuid' => $this->order->uuid,
             'seller_id' => $this->order->seller_id,
@@ -52,6 +51,7 @@ class CreateOrderPodcast implements ShouldQueue
             'status' => Order::NORMAL,
             'place_time' => $this->order->place,
             'pay_time' => 0,
+            'total_price' => $this->order->total_price,
         ];
 
         // 如果订单已经过期，则直接插入过期订单
@@ -78,7 +78,7 @@ class CreateOrderPodcast implements ShouldQueue
             OrderCart::singleton()->insert($orderCartBean);
             DB::commit();
         } catch (\Throwable $th) {
-            dump($th);
+            dump($th->getMessage());
             DB::rollBack();
             // TODO:mongoDB日志
 

@@ -9,11 +9,12 @@ use App\Lib\Parameter\LimitParam;
 use App\Lib\RetJson;
 use App\Repositories\Category;
 use App\Repositories\GoodsCategoryAccess;
+use Illuminate\Http\Request;
 
 class GoodsService
 {
 
-    public function getGoodsList(GoodsListRequest $request): RetInterface
+    public function getGoodsList(Request $request): RetInterface
     {
         $categoryId = (int) $request->input('category', 0);
 

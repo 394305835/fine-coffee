@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Goods\IndexTypesRequest;
 use App\Http\Requests\IDRequest;
 use App\Http\Requests\User\Goods\AddTypeRequest;
 use App\Http\Requests\User\Goods\SaveTypeRequest;
@@ -44,5 +45,17 @@ class AdminTypeController extends Controller
     public function saveType(SaveTypeRequest $request, AdminTypeService $service)
     {
         return $this->api->reply($service->saveType($request));
+    }
+
+    /**
+     * 查询商品属性选择
+     *
+     * @param IndexTypesRequest $request
+     * @param AdminTypeService $service
+     * @return void
+     */
+    public function getTypes(IndexTypesRequest $request, AdminTypeService $service)
+    {
+        return $this->api->reply($service->getTypes($request));
     }
 }

@@ -21,6 +21,9 @@ class Model extends EloquentModel
     //  */
     // protected $dateFormat = 'U';
 
+    public $timestamps = false;
+
+
     /**
      * 获取当前模型的 attributes
      *

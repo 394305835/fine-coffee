@@ -68,6 +68,7 @@ class OrderService extends UserBaseService
 
         //3--拿到商品信息
         $goods = Goods::singleton('id', 'theme', 'name', 'price', 'is_sale')->getGoodsById($goodsId);
+        $name = $goods->name;
         $sectionType = SectionType::singleton('title')->getGoodsByIds($typeIds)->pluck('title')->toArray();
 
         $number = (int) $request->input('number');
@@ -92,7 +93,8 @@ class OrderService extends UserBaseService
                 $discount,   // 折扣,优惠金额
                 0,  // 折扣后的单价
                 10,  // 实际支付金额
-                $sign
+                $sign,
+                $name
             )
         );
     }
@@ -192,7 +194,7 @@ class OrderService extends UserBaseService
         // // 1. 获取购物车信息，可能有多个
         $repo = ShoppingCart::factory(USER_UID);
         $shops = [];
-
+        $totalPrice = 0;
 
         foreach ($cartIds as $_cartId) {
             $shop = $repo->getShopById($_cartId);
@@ -200,35 +202,14 @@ class OrderService extends UserBaseService
                 // 404: 购买的购物车信息不存在
                 return RetJson::make(404)->error('网络错误');
             }
-            // 
+            if (!SKU::singleton()->checkSKU($shop->goods_id, $shop->number)) {
+                return RetJson::pure()->msg('货物被抢光啦');
+            }
+            // 订单总价计算
+            $totalPrice += $shop->actual;
             $shops[] = $shop;
             // array_push($shops, $shop);
         }
-
-        // $goodsTypeIds = [1, 2, 3, 4];
-        // $typeIds = array_rand(array_flip($goodsTypeIds), 3);
-        // $goodsId = 1;
-        // $user_id = rand(1, 10);
-        // $number = rand(1, 3);
-        foreach ($shops as $_shops) {
-            if (!SKU::singleton()->checkSKU($_shops->goods_id, $_shops->number)) {
-                return RetJson::pure()->msg('货物被抢光啦');
-            }
-        }
-
-        // $shops[] = new DShoppingCartModel(
-        //     $user_id,
-        //     $goodsId,
-        //     $typeIds,
-        //     '大/糖/热',
-        //     $number,  // 购买数量
-        //     200,  // 单价
-        //     100,   // 折扣,优惠金额
-        //     100,  // 折扣后的单价
-        //     100,  // 实际支付金额
-        //     GoodsSign::singleton($user_id)->getToken($goodsId)
-        // );
-
         // 商家信息
         $sellerId = 1;
 
@@ -236,10 +217,9 @@ class OrderService extends UserBaseService
         $place = time();
         // 订单过期时间，为当前时间开始起，截止到10分钟后
         $etime = $place + Constans::TIME_TEN_MINUTE;
-        $order = new DOrdereModel(Str::uuid(), $sellerId, USER_UID, $place, $etime);
+        $order = new DOrdereModel(Str::uuid(), $sellerId, USER_UID, $place, $etime, $totalPrice);
         $order->shopcart = $shops;
         $order->pay_id = (int) $request->input('pay_id');
-
         // (new \App\Jobs\CreateOrderPodcast($order))->handle();
         // 将订单入队列，交给队列生成订单
         \App\Jobs\CreateOrderPodcast::dispatch($order);
