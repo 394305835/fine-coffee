@@ -10,6 +10,7 @@ use App\Http\Requests\User\Goods\SaveSectionsRequest;
 use App\Http\Requests\User\Goods\SaveTypeRequest;
 use App\Lib\Parameter\LimitParam;
 use App\Lib\Parameter\SortParam;
+use App\Lib\Parameter\WhereParam;
 use App\Lib\RetJson;
 use App\Repositories\SectionType;
 
@@ -94,10 +95,11 @@ class AdminTypeService
         $sp = new SortParam();
         $sp->sort('id', 'desc');
         $sort = $sp->build();
-        $typesList = SectionType::singleton()->getTypesList($limit, $sort);
-        if (!empty($request->input('title'))) {
-            $typesList->where('title', $request->input('title'));
-        }
-        return RetJson::pure()->list(($typesList->toArray()));
+        //条件
+        list($where) = (new WhereParam())->compare('title')->in('section_id')->build();
+        //数据
+        $typesList = SectionType::singleton()->getTypesList($limit, $sort, $where);
+        //返回
+        return RetJson::pure()->list($typesList);
     }
 }

@@ -32,8 +32,7 @@ class GoodsService
         $goodsIds = $goodsCollection->pluck('id')->toArray();
         // 分类信息
         $categoryIds = $goodsCollection->pluck('category_id')->toArray();
-        $categorys = Category::singleton('id', 'title')->getCategoryByIds($categoryIds)->pluck('title', 'id')->toArray();
-
+        $categorys = Category::singleton('id', 'title', 'sort')->getCategoryByIds($categoryIds)->pluck('title', 'id', 'sort')->toArray();
         // 3.商品属性信息
         $goodsTypes = (new Section)->getGoodsTypeByGoodsIds($goodsIds);
         $goodsTypes = array_column($goodsTypes->toArray(), null, 'goods_id');

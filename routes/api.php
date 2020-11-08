@@ -58,7 +58,7 @@ Route::middleware('cors')->group(function () {
 
 // 后台端
 Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'])->group(function () {
-    //个人信息获取
+    //获取登录用户的可访问菜单
     Route::get('/menus', 'ApiController@getMenus');
     // 用户-文件上传
     Route::post('/upload', 'ApiController@upAdminFile');
@@ -133,6 +133,15 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         Route::put('/sku', 'AdminSkuController@saveSKU');
         //后台商品库存查询
         Route::get('/skus', 'AdminSkuController@getSKUS');
+
+        //后台商品分类增加
+        Route::post('/category', 'AdminCategoryController@addCategory');
+        //后台商品分类删除
+        Route::delete('/category', 'AdminCategoryController@deleteCategory');
+        //后台商品分类修改
+        Route::put('/category', 'AdminCategoryController@saveCategory');
+        //后台商品分类查询
+        Route::get('/categorys', 'AdminCategoryController@getCategorys');
     });
 });
 

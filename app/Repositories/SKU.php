@@ -5,8 +5,7 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\GoodsSKUModel;
 use App\Model\Mysql\Model;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class SKU extends MysqlRepository
 {
@@ -108,8 +107,12 @@ class SKU extends MysqlRepository
      * @param integer $goods_id
      * @return integer
      */
-    public function getAllSKU(int $limit, array $sort): ?Paginator
+    public function getAllSKU(int $limit, array $sort, array $where): ?LengthAwarePaginator
     {
-        return  $this->model->query()->paginate($limit);
+        $res = $this->model->query()->where($where);
+        foreach ($sort as $key => $value) {
+            $res = $res->orderBy($key, $value);
+        }
+        return  $res->paginate($limit);
     }
 }

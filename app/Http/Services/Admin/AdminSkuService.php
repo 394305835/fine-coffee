@@ -9,6 +9,7 @@ use App\Http\Requests\User\Goods\IndexSKUSRequest;
 use App\Http\Requests\User\Goods\SaveSkuRequest;
 use App\Lib\Parameter\LimitParam;
 use App\Lib\Parameter\SortParam;
+use App\Lib\Parameter\WhereParam;
 use App\Lib\RetJson;
 use App\Repositories\Goods;
 use App\Repositories\SKU;
@@ -128,10 +129,11 @@ class AdminSkuService
         $sp = new SortParam();
         $sp->sort('goods_id', 'desc');
         $sort = $sp->build();
-        $SKUList = SKU::singleton()->getAllSKU($limit, $sort);
-        if (!empty($request->input('goods_id'))) {
-            $SKUList->where('goods_id', $request->input('goods_id'));
-        }
-        return RetJson::pure()->list(($SKUList->toArray()));
+        //条件
+        list($where) = (new WhereParam)->compare('goods_id')->build();
+        //数据
+        $SKUList = SKU::singleton()->getAllSKU($limit, $sort, $where);
+        //返回
+        return RetJson::pure()->list($SKUList);
     }
 }

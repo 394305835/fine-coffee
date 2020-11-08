@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\GoodsSectionModel;
 use App\Model\Mysql\Model;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -74,15 +75,16 @@ class GoodsSection extends MysqlRepository
      *
      * @param integer $limit
      * @param array $sort
-     * @return Collection|null
+     * @param array $where
+     * @return LengthAwarePaginator|null
      */
-    public function getSectionsList(int $limit, array $sort): ?Paginator
+    public function getSectionsList(int $limit, array $sort, array $where): ?LengthAwarePaginator
     {
-        $res = $this->model->query()->paginate($limit);
-        // foreach ($sort as $key => $value) {
-        //     // order_by只能一次次掉(同where)
-        //     $res->orderBy($key, $value);
-        // }
-        return $res;
+        $res = $this->model->query()->where($where);
+        foreach ($sort as $key => $value) {
+            // order_by只能一次次掉(同where)
+            $res = $res->orderBy($key, $value);
+        }
+        return $res->paginate($limit);
     }
 }

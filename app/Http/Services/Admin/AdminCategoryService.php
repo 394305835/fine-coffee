@@ -4,42 +4,43 @@ namespace App\Http\Services\Admin;
 
 use App\Contracts\RestFul\Ret\RetInterface;
 use App\Http\Requests\IDRequest;
-use App\Http\Requests\User\Goods\AddSectionsRequest;
-use App\Http\Requests\User\Goods\IndexSectionsRequest;
+use App\Http\Requests\User\Goods\AddCategoryRequest;
+use App\Http\Requests\User\Goods\IndexCategorysRequest;
 use App\Http\Requests\User\Goods\SaveSectionsRequest;
+use App\Http\Requests\User\Goods\SaveCategoryRequest;
 use App\Lib\Parameter\LimitParam;
 use App\Lib\Parameter\SortParam;
 use App\Lib\Parameter\WhereParam;
 use App\Lib\RetJson;
-use App\Repositories\GoodsSection;
+use App\Repositories\Category;
 
 /**
- * 该类提供了后台端的商品属性增删改
+ * 该类提供了后台端的商品分类增删改查
  */
-class AdminSectionsService
+class AdminCategoryService
 {
     /**
-     * 增加商品属性
+     * 增加商品分类
      *
-     * @param AddSectionsRequest $request
+     * @param AddCategoryRequest $request
      * @return RetInterface
      */
-    public function addSections(AddSectionsRequest $request): RetInterface
+    public function addCategory(AddCategoryRequest $request): RetInterface
     {
-        //拿到要增加商品属性的信息
-        //判断商品属性是否存在  
+        //拿到要增加商品分类的信息
+        //判断商品分类是否存在  
         // 存在：返回提示信息
         // 不存在：添加商品
 
-        //1--拿到要增加商品的信息
-        $id = $request->input('id');
+        //1--拿到要增加商品分类的信息
         $title = $request->input('title');
+        $sort = $request->input('sort');
         //2--判断商品是否存在 (不存在才执行后面，存在返回)
-        $resTitle = GoodsSection::singleton()->getTitleBySectionTitle($title);
+        $resTitle = Category::singleton('title')->getTitleByCategoryTitle($title);
         //2.1--不存在
         if (!$resTitle) {
-            //增加商品属性
-            GoodsSection::singleton()->insertSections($id, $title);
+            //增加商品分类
+            Category::singleton()->insertCategory($title, $sort);
             return RetJson::pure()->msg('添加成功');
         } else {
             return RetJson::pure()->msg('名称重复，请重新输入');
@@ -52,14 +53,13 @@ class AdminSectionsService
      * @param IDRequest $request
      * @return RetInterface
      */
-    public function deleteSections(IDRequest $request): RetInterface
+    public function deleteCategory(IDRequest $request): RetInterface
     {
-        //拿到要删除商品属性ID
+        //拿到要删除商品分类ID
         //直接删除
         //返回
-
         $ids = $request->input('id');
-        GoodsSection::singleton()->deleteById($ids);
+        Category::singleton()->deleteById($ids);
         return RetJson::pure()->msg('删除成功');
     }
 
@@ -69,38 +69,36 @@ class AdminSectionsService
      * @param SaveSectionsRequest $request
      * @return RetInterface
      */
-    public function saveSections(SaveSectionsRequest $request): RetInterface
+    public function saveCategory(SaveCategoryRequest $request): RetInterface
     {
         $id = $request->input('id');
         $title = $request->input('title');
+        $sort = $request->input('sort');
         if (!empty($title)) {
-            GoodsSection::singleton()->UpdateById($id, $title);
+            Category::singleton()->UpdateById($id, $title, $sort);
         }
         return RetJson::pure()->msg('修改成功');
     }
 
     /**
-     * 查询商品属性
+     * 查询商品分类
      *
-     * @param IndexSectionsRequest $request
+     * @param IndexCategorysRequest $request
      * @return RetInterface
      */
-    public function getSections(IndexSectionsRequest $request): RetInterface
+    public function getCategorys(IndexCategorysRequest $request): RetInterface
     {
-        //需要--条件，查询数据，排序，分页
-        //返回--list数据
-
         //分页
         list($limit) = (new LimitParam())->build();
         //排序
-        $sp = (new SortParam());
+        $sp = new SortParam();
         $sp->sort('id', 'desc');
         $sort = $sp->build();
-        //条件查询
+        //条件
         list($where) = (new WhereParam())->compare('title')->build();
-        //查询数据
-        $sectionsList = GoodsSection::singleton()->getSectionsList($limit, $sort, $where);
+        //数据
+        $CategorysList = Category::singleton()->getCategorysList($limit, $sort, $where);
         //返回
-        return RetJson::pure()->list($sectionsList);
+        return RetJson::pure()->list($CategorysList);
     }
 }
