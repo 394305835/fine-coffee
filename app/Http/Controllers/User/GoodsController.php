@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IDRequest;
 use App\Http\Requests\User\Goods\GoodsIndexRequest;
-use App\Http\Services\Seller\GoodsService;
+use App\Http\Services\User\GoodsService;
 
 class GoodsController extends Controller
 {

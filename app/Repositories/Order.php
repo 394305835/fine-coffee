@@ -33,10 +33,10 @@ class Order extends MysqlRepository
      * @param string $uuid
      * @return OrderModel|null
      */
-    public function getOrderByUuid(string $uuid): ?OrderModel
+    public function getOrderByUuid(string $uuid): ?Collection
     {
-        return $this->model
-            ->select('id', 'seller_id', 'user_id', 'pay_id', 'pay_status', 'status', 'place_time', 'pay_time', 'created_time')
+        return $this->model->query()
+            ->select('id', 'seller_id', 'user_id', 'pay_id', 'pay_status', 'status', 'place_time', 'pay_time', 'created_at')
             ->where('uuid', $uuid)
             ->get();
     }
