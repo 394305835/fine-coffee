@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Lib\Repository\MysqlRepository;
 use App\Model\Mysql\Model;
 use App\Model\Mysql\OrderModel;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class Order extends MysqlRepository
 {
@@ -48,5 +50,55 @@ class Order extends MysqlRepository
     public function updateByUuid(string $uuid, array $bean): bool
     {
         return $this->update([['uuid', '=', $uuid]], $bean);
+    }
+    /**
+     * 后台获取全部订单
+     *
+     * @param integer $limit
+     * @param array $sort
+     * @param array $where
+     * @return LengthAwarePaginator|null
+     */
+    public function getAllOrder(int $limit, array $sort, array $where): ?LengthAwarePaginator
+    {
+        $res = $this->model->query()->where($where);
+        foreach ($sort as $key => $value) {
+            $res = $res->orderBy($key, $value);
+        }
+        return $res->paginate($limit);
+    }
+
+    /**
+     * 用户获取全部订单
+     *
+     * @param integer $limit
+     * @param array $sort
+     * @param array $where
+     * @return LengthAwarePaginator|null
+     */
+    public function getOrderByUserId(int $limit, array $sort, array $where): ?LengthAwarePaginator
+    {
+        $res = $this->model->query()->where($where)->where('user_id', USER_UID);
+        foreach ($sort as $key => $value) {
+            $res = $res->orderBy($key, $value);
+        }
+        return $res->paginate($limit);
+    }
+
+    /**
+     * 商家获取全部订单
+     *
+     * @param integer $limit
+     * @param array $sort
+     * @param array $where
+     * @return LengthAwarePaginator|null
+     */
+    public function getOrderBySellerId(int $limit, array $sort, array $where): ?LengthAwarePaginator
+    {
+        $res = $this->model->query()->where($where)->where('seller_id', SE_UID);
+        foreach ($sort as $key => $value) {
+            $res = $res->orderBy($key, $value);
+        }
+        return $res->paginate($limit);
     }
 }

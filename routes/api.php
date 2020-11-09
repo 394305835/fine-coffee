@@ -62,6 +62,10 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
     Route::get('/menus', 'ApiController@getMenus');
     // 用户-文件上传
     Route::post('/upload', 'ApiController@upAdminFile');
+    //获取全部订单
+    Route::get('/order/query', 'AdminOrderController@getOrderList');
+    //获取订单购物车信息
+    Route::get('/order_cart', 'AdminOrderController@getOrderCartList');
 
     // 后台权限
     Route::middleware('auth.admin.rule')->group(function () {
@@ -151,6 +155,10 @@ Route::namespace('User')->prefix('user')->middleware(['cors', 'auth.user.api'])-
 
     // 获取用户个人信息
     Route::get('/info', 'UserController@getUserInfo');
+    //获取全部订单
+    Route::get('/order/query', 'UserOrderController@getOrderList');
+    //获取订单购物车信息
+    Route::get('/order_cart', 'UserOrderController@getOrderCartList');
 
     // // 用户-列表
     // Route::get('/list', 'UserController@index');
@@ -186,4 +194,9 @@ Route::namespace('Seller')->prefix('seller')->middleware(['cors', 'auth.seller.a
 
     // 商品信息获取
     Route::get('/goods', 'GoodsController@getGoodsList');
+
+    //获取全部订单
+    Route::get('/order/query', 'SellerOrderController@getOrderList');
+    //获取订单购物车信息
+    Route::get('/order_cart', 'SellerOrderController@getOrderCartList');
 });
