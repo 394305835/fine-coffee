@@ -199,4 +199,16 @@ Route::namespace('Seller')->prefix('seller')->middleware(['cors', 'auth.seller.a
     Route::get('/order/query', 'SellerOrderController@getOrderList');
     //获取订单购物车信息
     Route::get('/order_cart', 'SellerOrderController@getOrderCartList');
+
+    // 商家管理
+    //获取当前商家用户信息
+    Route::get('/info', 'SellerController@getSellerInfo');
+    // // 商家-列表--不需要这个接口
+    // Route::get('/sellers', 'SellerController@index');
+    // 商家-新增
+    Route::post('/seller', 'SellerController@addSeller');
+    // 商家-编辑
+    Route::put('/seller', 'SellerController@saveSeller');
+    // 商家-删除
+    Route::delete('/seller', 'SellerController@deleteSeller');
 });
