@@ -70,7 +70,7 @@ class Seller extends MysqlRepository
     public function getSellerById(): ?SellerModel
     {
         return $this->model->query()
-            ->where('id', SE_UID)
+            ->where('id', SELLER_UID)
             ->first();
     }
 
@@ -82,6 +82,6 @@ class Seller extends MysqlRepository
      */
     public function deleteById(): bool
     {
-        return $this->model->where('id', SE_UID)->delete();
+        return $this->model->where('id', SELLER_UID)->delete();
     }
 }

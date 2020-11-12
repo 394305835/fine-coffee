@@ -95,7 +95,7 @@ class Order extends MysqlRepository
      */
     public function getOrderBySellerId(int $limit, array $sort, array $where): ?LengthAwarePaginator
     {
-        $res = $this->model->query()->where($where)->where('seller_id', SE_UID);
+        $res = $this->model->query()->where($where)->where('seller_id', SELLER_UID);
         foreach ($sort as $key => $value) {
             $res = $res->orderBy($key, $value);
         }

@@ -76,7 +76,7 @@ class SellerService
          * 1--拿到要修改的信息
          * 2--判断修改的商家是否存在
          * 3--存在 判断是否有数据  允许修改   不存在 提示返回 
-         * 目前只可以修改自己  使用的SE_UID
+         * 目前只可以修改自己  使用的SELLER_UID
          */
         $post = $request->only(array_keys($request->rules()));
         if (empty($post)) {
@@ -90,11 +90,11 @@ class SellerService
             return RetJson::pure()->msg('商家不存在');
         }
         $bean = [];
-        foreach ($post as $k=>$v) {
-            if($k == 'password'){
+        foreach ($post as $k => $v) {
+            if ($k == 'password') {
                 $bean[$k] = encrypt($v);
-            }else{
-                $bean[$k] = $v
+            } else {
+                $bean[$k] = $v;
             }
         }
         // if (!empty($post['theme'])) {
@@ -109,13 +109,12 @@ class SellerService
         // }
         DB::beginTransaction();
         try {
-            $repo->updateById(SE_UID, $post);
+            $repo->updateById(SELLER_UID, $post);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
             return RetJson::pure()->throwable($th);
         }
-
         return RetJson::pure()->msg('修改成功');
     }
 
@@ -131,7 +130,7 @@ class SellerService
         /**
          * 1--拿到要删除的ID
          * 2--判断ID是否存在
-         * 3--执行操作 删除 OR 不删除  目前只可以删除自己  使用的SE_UID
+         * 3--执行操作 删除 OR 不删除  目前只可以删除自己  使用的SELLER_UID
          */
         $repo = Seller::singleton();
         $bool = $repo->getSellerById();
