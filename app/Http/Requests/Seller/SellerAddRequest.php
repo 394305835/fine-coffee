@@ -25,7 +25,6 @@ class SellerAddRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'id' => 'required',
             'number' => 'required|integer|min:0', // 管理员ID, 最小0,用于编辑修改
             'theme' => 'required', // 商家头像
             'username' => 'required', // 商家账户
@@ -40,7 +39,6 @@ class SellerAddRequest extends BaseRequest
     public function messages(): array
     {
         return [
-            'number.id' => '商家ID不能为空',
             'number.required' => '商家编号不能为空',
             'number.integer' => '商家必须是整数',
             'number.required' => '商家编号最小为0',

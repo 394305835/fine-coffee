@@ -51,10 +51,10 @@ trait Check
  * 2. 角色
  * 3. 访问权限 
  */
-class AuthBase 
+class AuthBase
 {
     use Check;
-    
+
     /**
      * 获取用户对应的组信息,可以接受多个用户的组信息
      * 提供UID，找到关系表ACCESS，找到UID对应的Group_id，查询group表，拿到信息。OVER！

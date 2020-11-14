@@ -53,7 +53,7 @@ class Seller extends MysqlRepository
      *
      * @return Collection|null
      */
-    public function getNumberOrUsernameById(array $post): ?SellerModel
+    public function getNumberOrUsername(array $post): ?SellerModel
     {
         return $this->model->query()
             ->where('number', $post['number'])

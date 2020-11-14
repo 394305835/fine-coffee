@@ -44,24 +44,25 @@ class SellerService
          * 2--判断新增的商家信息是否存在
          * 3--存在  返回  不存在  新增操作
          */
-
         $post = $request->only(array_keys($request->rules()));
-        unset($post['id']);
         $repo = Seller::singleton();
-        $bool = $repo->getNumberOrUsernameById($post);
+        $bool = $repo->getNumberOrUsername($post);
         if (!empty($bool)) {
             return RetJson::pure()->msg('商家编号或名字已经存在，无法添加');
         }
         DB::beginTransaction();
         try {
             $post['password'] = encrypt($post['password']);
-            $repo->insert($post);
+            //拿到ID  方便处理后面的头像。
+            $id = $repo->insertGetId($post);
             DB::commit();
         } catch (\Throwable $th) {
             return RetJson::pure()->throwable($th);
             DB::rollBack();
         }
-        return RetJson::pure()->list();
+        //处理头像
+        $post['theme'] = (new ApiService)->addSellerTheme($request, $id);
+        return RetJson::pure()->msg('商家新增成功');
     }
     /**
      * 商家管理-商家-编辑
@@ -74,7 +75,7 @@ class SellerService
     {
         /**
          * 1--拿到要修改的信息
-         * 2--判断修改的商家是否存在
+         * 2--判断修改的商家是否存在(这里也判断了是否是自己修改自己)
          * 3--存在 判断是否有数据  允许修改   不存在 提示返回 
          * 目前只可以修改自己  使用的SELLER_UID
          */

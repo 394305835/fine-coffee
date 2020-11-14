@@ -54,6 +54,9 @@ Route::middleware('cors')->group(function () {
 
     //用户商品信息获取(PS:不需要登录也可以查看商品)
     Route::get('/goods/list', [\App\Http\Controllers\User\GoodsController::class, 'getGoodsList']);
+
+    // 商家-新增
+    Route::post('/seller', [\App\Http\Controllers\Seller\SellerController::class, 'addSeller']);
 });
 
 // 后台端
@@ -74,7 +77,7 @@ Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'
         // 管理员-列表
         Route::get('/admins', 'AuthAdminController@index');
         // 管理员-新增
-        Route::post('/admin', 'AuthAdminController@saveAdmin');
+        Route::post('/admin', 'AuthAdminController@addAdmin');
         // 管理员-编辑
         Route::put('/admin', 'AuthAdminController@saveAdmin');
         // 管理员-删除
@@ -205,8 +208,8 @@ Route::namespace('Seller')->prefix('seller')->middleware(['cors', 'auth.seller.a
     Route::get('/info', 'SellerController@getSellerInfo');
     // // 商家-列表--不需要这个接口
     // Route::get('/sellers', 'SellerController@index');
-    // 商家-新增
-    Route::post('/seller', 'SellerController@addSeller');
+    // // 商家-新增--放在外面的
+    // Route::post('/seller', 'SellerController@addSeller');
     // 商家-编辑
     Route::put('/seller', 'SellerController@saveSeller');
     // 商家-删除

@@ -15,6 +15,6 @@ class ApiController extends Controller
      */
     public function upLoadTheme(ApiService $service)
     {
-        return $this->api->reply($service->saveUserTheme($this->request));
+        return $this->api->reply($service->saveSellerTheme($this->request));
     }
 }

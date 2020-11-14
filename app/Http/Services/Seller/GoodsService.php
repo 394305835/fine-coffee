@@ -11,9 +11,18 @@ use App\Repositories\Category;
 use App\Repositories\GoodsCategoryAccess;
 use Illuminate\Http\Request;
 
+/**
+ * 该类提供了商品查询
+ */
 class GoodsService
 {
 
+    /**
+     * 菜单界面--商品查询接口
+     *
+     * @param Request $request
+     * @return RetInterface
+     */
     public function getGoodsList(Request $request): RetInterface
     {
         $categoryId = (int) $request->input('category', 0);
