@@ -21,9 +21,10 @@ class Category extends MysqlRepository
         return CategoryModel::singleton();
     }
 
+
     public function getListSort(string $sort, string $sortBy = 'asc'): Collection
     {
-        return $this->model->query()->where('id', '<', 4)->orderBy($sort, $sortBy)->get($this->field);
+        return $this->model->query()->select('id','title','sort')->orderBy($sort, $sortBy)->get();
     }
 
     public function getCategoryByIds(array $categoryIds): Collection

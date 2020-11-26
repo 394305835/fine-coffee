@@ -32,9 +32,9 @@ class GoodsService
     public function getGoodsList($request): RetInterface
     {
         // 整体逻辑--商品和类别--这里做完了，就查后面的两个连接，然后把需要的数据拼接到这里的查询结果来
-
+        
         //第一步   把类别查询出来
-        $categoryList = Category::singleton('id', 'title', 'sort')->getListSort('sort', 'desc')->toArray();
+        $categoryList = Category::singleton()->getListSort('sort', 'desc')->toArray();
         $categoryList = array_column($categoryList, null, 'id');
         //拿到查询类别的ID
         $categoryIds = array_keys($categoryList);
@@ -42,17 +42,19 @@ class GoodsService
         $goodsList = GoodsAccess::singleton()->getGoodsByCategoryIds($categoryIds);
 
         //第二步  1,2
-
         // 1--section与type关系
         $typeIds = [];
         foreach ($goodsList as $v) {
             //扁平化过程，将多维数组变成一维数组
-            $v->type_id = explode(',', $v->type_id);
+            // $v->type_id = explode(',', $v->type_id);
+            // dd($v->type_id);
             $typeIds = array_merge($typeIds, $v->type_id);
         }
         //array_flip一次去重操作，也就是键值对互换位置，所以这个时候我们需要的值就在key  取key出来就行了。
-        $typeIds = array_keys(array_flip($typeIds));
+        // $typeIds = array_keys(array_flip($typeIds));
         $types = SectionType::singleton()->getTypeByIds($typeIds);
+        $goodsList = $goodsList->toArray();
+        // dd($goodsList);
 
         // $a = [['typeid' => '1,2,3']];
         // foreach ($a as $v) {

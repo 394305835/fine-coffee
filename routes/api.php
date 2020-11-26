@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\URL;
 |
  */
 
+//测试
+Route::get('/test', 'TestController@test');
+//文件测试
+Route::post('/file', 'TestController@upload');
+
 
 //测试自动下单接口
 Route::get('/test_buy', [OrderController::class, 'payOrder']);
@@ -32,6 +37,7 @@ Route::get('hello', function () {
     }
     dd(URL::previous());
 });
+
 
 // 普通登录跨域接口
 Route::middleware('cors')->group(function () {

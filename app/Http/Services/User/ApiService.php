@@ -36,6 +36,7 @@ class ApiService extends UserBaseService
         if ($code) {
             return RetJson::pure()->entity($code);
         }
+        dd(1);
         $client = new Client();
         try {
             //发送
@@ -68,7 +69,6 @@ class ApiService extends UserBaseService
         if (empty($file) || !$fs->verifFile($file)) {
             return RetJson::pure()->msg('请上传图片');
         }
-
         // 3. 将文件保存到服务器上
         // 4. 得到该文件在服务器上的相对路径
         $filePath = $fs->setFilanme(USER_UID)->upload($file);

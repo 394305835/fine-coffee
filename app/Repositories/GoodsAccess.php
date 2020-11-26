@@ -22,6 +22,13 @@ class GoodsAccess extends MysqlRepository
     }
 
     /**
+     * 现在需要用类别查询商品。拿到所有的类别了.->$categoryIds
+     * 然后在商品和类别access表中查询有哪些商品ID(goods_category_access)
+     * 商品和分类连接  
+     * 商品和属性链接
+     */
+
+    /**
      * 类别的ID查询类别对应商品的信息(包括商品，商品属性，商品属性选择)
      *
      * @param [type] $categoryIds
@@ -29,9 +36,10 @@ class GoodsAccess extends MysqlRepository
      */
     public function getGoodsByCategoryIds($categoryIds): Collection
     {
-        return $this->model->join('goods', 'goods.id', '=', 'goods_access.goods_id')
-            ->whereIn('category_id', $categoryIds)
-            ->get(['goods_access.category_id', 'goods.id', 'goods.theme', 'goods.name', 'goods.subtitle', 'goods.price', 'goods.is_sale', 'goods_access.section_id', 'goods_access.type_id']);
+        return $this->model->join('goods_category_access', 'goods_category_access.goods_id', '=', 'goods_access.goods_id')
+        ->join('goods', 'goods.id', '=', 'goods_access.goods_id')
+            ->whereIn('goods_category_access.category_id', $categoryIds)
+            ->get(['goods_category_access.category_id', 'goods.id', 'goods.theme', 'goods.name', 'goods.subtitle', 'goods.price', 'goods.is_sale', 'goods_access.section_id', 'goods_access.type_id']);
     }
 
 

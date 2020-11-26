@@ -32,10 +32,10 @@ class LoginService
      */
     public function login(AuthAdminLoginRequest $request): RetInterface
     {
-        $repo = AuthAdmin::singleton('id', 'password');
         $username = $request->input('username');
         $password = $request->input('password');
         $ret = RetJson::pure();
+        $repo = AuthAdmin::singleton('id', 'password');
         $user = $repo->getAdminByUserName($username);
 
         if ($user) {
