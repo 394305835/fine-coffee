@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\URL;
 
 //测试
 Route::get('/test', 'TestController@test');
+Route::get('/abc', function () {
+    dd(1);
+});
 //文件测试
 Route::post('/file', 'TestController@upload');
 
@@ -69,7 +72,7 @@ Route::middleware('cors')->group(function () {
 Route::namespace('Admin')->prefix('admin')->middleware(['cors', 'auth.admin.api'])->group(function () {
     //获取登录用户的可访问菜单
     Route::get('/menus', 'ApiController@getMenus');
-    // 用户-文件上传
+    // 管理员-头像上传
     Route::post('/upload', 'ApiController@upAdminFile');
     //获取全部订单
     Route::get('/order/query', 'AdminOrderController@getOrderList');

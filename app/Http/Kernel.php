@@ -53,8 +53,10 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+
+
         // 'auth' => \App\Http\Middleware\Authenticate::class,
-        // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        // 'auth.basic' => \ Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cors' => \Fruitcake\Cors\HandleCors::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -64,6 +66,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+
         'auth.admin.api' => \App\Http\Middleware\AuthAdminApi::class,
         'auth.admin.rule' => \App\Http\Middleware\AuthAdminRule::class,
         'auth.user.api' => \App\Http\Middleware\AuthUserApi::class,

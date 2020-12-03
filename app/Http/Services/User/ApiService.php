@@ -36,7 +36,6 @@ class ApiService extends UserBaseService
         if ($code) {
             return RetJson::pure()->entity($code);
         }
-        dd(1);
         $client = new Client();
         try {
             //发送

@@ -24,6 +24,6 @@ class TokenServiceProvider extends ServiceProvider
     public function boot()
     {
         // 绑定 Token Interface
-        // $this->app->singleton(\App\Contracts\Token\TokenInterface::class, \App\Lib\Jwt::class);
+        $this->app->singleton(\App\Contracts\Token\TokenInterface::class, \App\Lib\Jwt\Jwt::class);
     }
 }

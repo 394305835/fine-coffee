@@ -13,5 +13,4 @@ interface UpdateRepository extends RepositoryInterface
      * @return boolean
      */
     public function update(array $where, array $bean): bool;
-
 }
